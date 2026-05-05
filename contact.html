@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Beau Cooper</title>
+  <meta name="description" content="Get in touch with Beau Cooper, Engineer." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;1,700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav__logo">Beau Cooper</a>
+    <div class="nav__links">
+      <a href="index.html" class="nav__link">Home</a>
+      <a href="about.html" class="nav__link">About</a>
+      <a href="projects.html" class="nav__link">Projects</a>
+      <a href="skills.html" class="nav__link">Skills</a>
+      <a href="resume.html" class="nav__link">Résumé</a>
+      <a href="contact.html" class="nav__link">Contact</a>
+      <a href="mailto:hello@alexmercer.dev" class="nav__cta">Let's talk</a>
+    </div>
+    <button class="nav__hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav__overlay">
+    <a href="index.html" class="nav__overlay-link">Home</a>
+    <a href="about.html" class="nav__overlay-link">About</a>
+    <a href="projects.html" class="nav__overlay-link">Projects</a>
+    <a href="skills.html" class="nav__overlay-link">Skills</a>
+    <a href="resume.html" class="nav__overlay-link">Résumé</a>
+    <a href="contact.html" class="nav__overlay-link">Contact</a>
+  </div>
+
+  <div class="page">
+    <main class="page__content">
+
+      <header class="page-header">
+        <h1 class="page-header__title">Contact</h1>
+        <p class="page-header__subtitle">Let's work together</p>
+      </header>
+
+      <div class="contact-body">
+
+        <div class="contact-intro reveal-up">
+          <p>
+            Have a project in mind, or just want to say hello? I'd love to hear from you.
+            I'm currently available for new consulting engagements and always happy to talk
+            through an interesting technical problem.
+          </p>
+        </div>
+
+        <!-- Contact methods -->
+        <div class="contact-methods">
+          <div class="contact-method">
+            <span class="contact-method__label">Email</span>
+            <a href="mailto:hello@alexmercer.dev" class="contact-method__value">hello@alexmercer.dev</a>
+          </div>
+          <div class="contact-method">
+            <span class="contact-method__label">LinkedIn</span>
+            <a href="https://linkedin.com/in/alexmercer" target="_blank" rel="noopener" class="contact-method__value">linkedin.com/in/alexmercer</a>
+          </div>
+          <div class="contact-method">
+            <span class="contact-method__label">GitHub</span>
+            <a href="https://github.com/alexmercer" target="_blank" rel="noopener" class="contact-method__value">github.com/alexmercer</a>
+          </div>
+          <div class="contact-method">
+            <span class="contact-method__label">Twitter</span>
+            <a href="https://twitter.com/alexmercer" target="_blank" rel="noopener" class="contact-method__value">@alexmercer</a>
+          </div>
+        </div>
+
+        <!-- Contact form -->
+        <form class="contact-form reveal-up" onsubmit="return false;">
+          <div class="form-field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name" />
+          </div>
+          <div class="form-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="your@email.com" autocomplete="email" />
+          </div>
+          <div class="form-field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell me about your project…"></textarea>
+          </div>
+          <button type="submit" class="form-submit">Send message →</button>
+        </form>
+
+        <p class="contact-location">Based in Texas — available worldwide</p>
+
+      </div>
+
+    </main>
+
+    <footer class="footer">
+      <div class="footer__row">
+        <span class="footer__copy">© 2025 Beau Cooper</span>
+        <span class="footer__social">
+          <a href="mailto:hello@alexmercer.dev">Email</a> /
+          <a href="https://linkedin.com/in/alexmercer" target="_blank" rel="noopener">LinkedIn</a> /
+          <a href="https://github.com/alexmercer" target="_blank" rel="noopener">GitHub</a>
+        </span>
+      </div>
+      <p class="footer__credit">Set in Playfair Display, Lora &amp; JetBrains Mono</p>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.9/dist/lenis.min.js"></script>
+  <script>gsap.registerPlugin(ScrollTrigger);</script>
+  <script src="js/main.js"></script>
+</body>
+</html>

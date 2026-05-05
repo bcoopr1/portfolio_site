@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foundry — Beau Cooper</title>
+  <meta name="description" content="Foundry — enterprise design system. A project by Beau Cooper." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;1,700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav__logo">Beau Cooper</a>
+    <div class="nav__links">
+      <a href="index.html" class="nav__link">Home</a>
+      <a href="about.html" class="nav__link">About</a>
+      <a href="projects.html" class="nav__link">Projects</a>
+      <a href="skills.html" class="nav__link">Skills</a>
+      <a href="resume.html" class="nav__link">Résumé</a>
+      <a href="contact.html" class="nav__link">Contact</a>
+      <a href="mailto:hello@alexmercer.dev" class="nav__cta">Let's talk</a>
+    </div>
+    <button class="nav__hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav__overlay">
+    <a href="index.html" class="nav__overlay-link">Home</a>
+    <a href="about.html" class="nav__overlay-link">About</a>
+    <a href="projects.html" class="nav__overlay-link">Projects</a>
+    <a href="skills.html" class="nav__overlay-link">Skills</a>
+    <a href="resume.html" class="nav__overlay-link">Résumé</a>
+    <a href="contact.html" class="nav__overlay-link">Contact</a>
+  </div>
+
+  <div class="page">
+    <main class="page__content">
+      <div class="project-detail">
+
+        <a href="projects.html" class="project-detail__back">← All projects</a>
+
+        <h1 class="project-detail__title">Argus</h1>
+        <p class="project-detail__meta">2026 · Lead Engineer · LoRa · Python · Long Range Mesh Network </p>
+
+        <div class="project-detail__desc">
+          <p>
+            Foundry is a component library and design system built for a 120-person software company
+            that had accumulated four years of inconsistent UI patterns across twelve product
+            surfaces. Every team had their own button. Some had three. The design and engineering
+            orgs were spending more time arguing about components than building features.
+          </p>
+          <p>
+            I led the architecture from scratch: a token-based design system where all visual
+            decisions — spacing, color, radius, shadow — live in CSS custom properties defined once
+            and consumed everywhere. The component library is written in React and TypeScript, with
+            Storybook as the primary documentation surface. Every component ships with accessibility
+            attributes, keyboard navigation, and a thorough story matrix covering all variants and
+            states.
+          </p>
+          <p>
+            The hardest part wasn't the engineering — it was the adoption strategy. We used a
+            "strangler fig" approach: the new components shadowed the old ones in the codebase,
+            and teams migrated surface by surface over a four-month period. I wrote the migration
+            guide and ran weekly office hours. Twelve months in, Foundry powers 100% of the
+            company's product surfaces, and the design/engineering handoff process has been
+            cut from three rounds of revision to one.
+          </p>
+        </div>
+
+        <div class="project-detail__facts">
+          <div class="project-detail__fact">
+            <span class="project-detail__fact-label">Client</span>
+            <span class="project-detail__fact-value">Land Owners in North Texas</span>
+          </div>
+          <div class="project-detail__fact">
+            <span class="project-detail__fact-label">Role</span>
+            <span class="project-detail__fact-value">Lead Engineer</span>
+          </div>
+          <div class="project-detail__fact">
+            <span class="project-detail__fact-label">Timeline</span>
+            <span class="project-detail__fact-value">6 months build, 4 months rollout, Late 2026</span>
+          </div>
+          <div class="project-detail__fact">
+            <span class="project-detail__fact-label">Stack</span>
+            <span class="project-detail__fact-value">Python, JSON, Flask, LoRa, C++ </span>
+          </div>
+          <div class="project-detail__fact">
+            <span class="project-detail__fact-label">Outcome</span>
+            <span class="project-detail__fact-value">Long Range connectivity and IoT control</span>
+          </div>
+        </div>
+
+        <div class="project-detail__links">
+          <a href="#" class="link-arrow">View Storybook →</a>
+          <a href="#" class="link-arrow">View source →</a>
+        </div>
+
+        <nav class="project-nav">
+          <a href="project-detail-1.html" class="project-nav__link project-nav__link--prev">← Previous project</a>
+          <a href="project-detail-3.html" class="project-nav__link project-nav__link--next">Next project →</a>
+        </nav>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__row">
+        <span class="footer__copy">© 2025 Beau Cooper</span>
+        <span class="footer__social">
+          <a href="mailto:hello@alexmercer.dev">Email</a> /
+          <a href="https://linkedin.com/in/alexmercer" target="_blank" rel="noopener">LinkedIn</a> /
+          <a href="https://github.com/alexmercer" target="_blank" rel="noopener">GitHub</a>
+        </span>
+      </div>
+      <p class="footer__credit">Set in Playfair Display, Lora &amp; JetBrains Mono</p>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.9/dist/lenis.min.js"></script>
+  <script>gsap.registerPlugin(ScrollTrigger);</script>
+  <script src="js/main.js"></script>
+</body>
+</html>

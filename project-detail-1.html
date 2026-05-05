@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shepherd — Beau Cooper</title>
+  <meta name="description" content="Meridian — real-time analytics platform. A project by Beau Cooper." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;1,700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav__logo">Beau Cooper</a>
+    <div class="nav__links">
+      <a href="index.html" class="nav__link">Home</a>
+      <a href="about.html" class="nav__link">About</a>
+      <a href="projects.html" class="nav__link">Projects</a>
+      <a href="skills.html" class="nav__link">Skills</a>
+      <a href="resume.html" class="nav__link">Résumé</a>
+      <a href="contact.html" class="nav__link">Contact</a>
+      <a href="mailto:hello@alexmercer.dev" class="nav__cta">Let's talk</a>
+    </div>
+    <button class="nav__hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav__overlay">
+    <a href="index.html" class="nav__overlay-link">Home</a>
+    <a href="about.html" class="nav__overlay-link">About</a>
+    <a href="projects.html" class="nav__overlay-link">Projects</a>
+    <a href="skills.html" class="nav__overlay-link">Skills</a>
+    <a href="resume.html" class="nav__overlay-link">Résumé</a>
+    <a href="contact.html" class="nav__overlay-link">Contact</a>
+  </div>
+
+  <div class="page">
+    <main class="page__content">
+      <div class="project-detail">
+
+        <a href="projects.html" class="project-detail__back">← All projects</a>
+
+        <h1 class="project-detail__title">Shepherd</h1>
+        <p class="project-detail__meta">2025 · Lead Developer · n8n · RAG · PostgreSQL · Gemini</p>
+
+        <div class="project-detail__desc">
+          <p>
+            Shepherd AI is a self-hosted email workflow agent I built for real estate teams to manage high-volume inboxes, organize client communication, and quickly retrieve important documents. The system connected to Microsoft 365 through OAuth, classified incoming emails, and stored key files in a local PostgreSQL vector database. I used n8n as the workflow automation layer to route emails, trigger classification steps, manage document ingestion, and support a RAG chatbot that allowed users to search their inbox and related files through natural language. 
+          </p>
+          <p>
+            The goal of Shepherd AI was to help the end user query their email through a secured chatbot and retrieve important documents faster, especially during closing and filing processes where speed and organization matter. Instead of manually searching through long email threads, attachments, and client folders, the user could ask the chatbot for specific documents or context and receive relevant results pulled from the indexed database.
+          </p>
+          <p>
+            Shepherd AI ran successfully for eight months before I shut it down due to energy usage and time constraints. Even though the service is no longer active, the project strengthened my understanding of AI workflow automation, secure self-hosting, and practical document retrieval systems for business use cases.
+          </p>
+        </div>
+
+        <div class="project-detail__facts">
+          <div class="project-detail__fact">
+            <span class="project-detail__fact-label">Client</span>
+            <span class="project-detail__fact-value">A ReMAX Realitor (confidential)</span>
+          </div>
+          <div class="project-detail__fact">
+            <span class="project-detail__fact-label">Role</span>
+            <span class="project-detail__fact-value">Lead Developer — sole engineer</span>
+          </div>
+          <div class="project-detail__fact">
+            <span class="project-detail__fact-label">Timeline</span>
+            <span class="project-detail__fact-value">2 months, 2025</span>
+          </div>
+          <div class="project-detail__fact">
+            <span class="project-detail__fact-label">Stack</span>
+            <span class="project-detail__fact-value">Google Gemini API, M365 API, Azure, PostgresSQL (pgvector), n8n, Email Parsing, Vector Embeddings, HTML, Metadata Tagging, OAuth 2.0</span>
+          </div>
+          <div class="project-detail__fact">
+            <span class="project-detail__fact-label">Outcome</span>
+            <span class="project-detail__fact-value"> Increased email management -> more houses sold.</span>
+          </div>
+        </div>
+
+
+              <!-- REMOVE -->
+
+        <div class="project-detail__links">
+          <a href="#" class="link-arrow">Visit live site →</a>
+          <a href="#" class="link-arrow">View source →</a>
+        </div>
+
+        <nav class="project-nav">
+          <span class="project-nav__link project-nav__link--prev" style="opacity:0.3;">← Previous project</span>
+          <a href="project-detail-2.html" class="project-nav__link project-nav__link--next">Next project →</a>
+        </nav>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__row">
+        <span class="footer__copy">© 2025 Beau Cooper</span>
+        <span class="footer__social">
+          <a href="mailto:hello@alexmercer.dev">Email</a> /
+          <a href="https://linkedin.com/in/alexmercer" target="_blank" rel="noopener">LinkedIn</a> /
+          <a href="https://github.com/alexmercer" target="_blank" rel="noopener">GitHub</a>
+        </span>
+      </div>
+      <p class="footer__credit">Set in Playfair Display, Lora &amp; JetBrains Mono</p>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.9/dist/lenis.min.js"></script>
+  <script>gsap.registerPlugin(ScrollTrigger);</script>
+  <script src="js/main.js"></script>
+</body>
+</html>

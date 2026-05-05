@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Beau Cooper</title>
+  <meta name="description" content="Background and experience of Beau Cooper, Engineer." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;1,700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav__logo">Beau Cooper</a>
+    <div class="nav__links">
+      <a href="index.html" class="nav__link">Home</a>
+      <a href="about.html" class="nav__link">About</a>
+      <a href="projects.html" class="nav__link">Projects</a>
+      <a href="skills.html" class="nav__link">Skills</a>
+      <a href="resume.html" class="nav__link">Résumé</a>
+      <a href="contact.html" class="nav__link">Contact</a>
+      <a href="mailto:hello@alexmercer.dev" class="nav__cta">Let's talk</a>
+    </div>
+    <button class="nav__hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav__overlay">
+    <a href="index.html" class="nav__overlay-link">Home</a>
+    <a href="about.html" class="nav__overlay-link">About</a>
+    <a href="projects.html" class="nav__overlay-link">Projects</a>
+    <a href="skills.html" class="nav__overlay-link">Skills</a>
+    <a href="resume.html" class="nav__overlay-link">Résumé</a>
+    <a href="contact.html" class="nav__overlay-link">Contact</a>
+  </div>
+
+  <div class="page">
+    <main class="page__content">
+
+      <!-- PAGE HEADER -->
+      <header class="page-header">
+        <h1 class="page-header__title">About</h1>
+        <p class="page-header__subtitle">Background &amp; experience</p>
+      </header>
+
+      <!-- BIO -->
+      <section class="about-bio">
+        <div class="about-bio__content">
+          <p>
+            I'm a full-stack developer with seven years of experience building software that people
+            actually use. I started my career at <code>Thornfield Digital</code>, a boutique agency in
+            Boston where I learned to move fast and deliver under pressure. That environment taught me
+            that good engineering and good communication are inseparable.
+          </p>
+          <p>
+            After three years at the agency, I joined <code>Clearwater Finance</code> as a senior
+            engineer, where I led the rebuild of their core reporting infrastructure — migrating from
+            a legacy <code>Rails</code> monolith to a modern <code>Next.js</code> frontend backed by
+            a <code>Go</code> API and <code>PostgreSQL</code>. That project cut report generation time
+            from 40 seconds to under 800ms and is now used by over 200 financial advisors daily.
+          </p>
+          <p>
+            In 2023 I went independent. I work with early-stage startups and established companies
+            alike — typically taking on projects where the engineering challenge and the product
+            challenge are genuinely intertwined. I care about the full picture: architecture,
+            performance, developer experience, and the small interaction details that make something
+            feel right rather than merely functional.
+          </p>
+          <p>
+            I'm currently based in Texas, though I work with teams across Europe and North America.
+            I'm always open to interesting conversations about new projects, consulting engagements,
+            or just trading notes on <code>TypeScript</code> and distributed systems.
+          </p>
+        </div>
+      </section>
+
+      <!-- CAREER TIMELINE -->
+      <section class="timeline">
+        <p class="timeline__label">Career</p>
+        <div class="timeline__entries">
+
+          <div class="timeline__entry reveal-up">
+            <span class="timeline__years">2023 — Present</span>
+            <div>
+              <p class="timeline__role">Independent Consultant</p>
+              <p class="timeline__company">Freelance — New York, NY</p>
+            </div>
+          </div>
+
+          <div class="timeline__entry reveal-up">
+            <span class="timeline__years">2020 — 2023</span>
+            <div>
+              <p class="timeline__role">Senior Software Engineer</p>
+              <p class="timeline__company">Clearwater Finance — Boston, MA</p>
+            </div>
+          </div>
+
+          <div class="timeline__entry reveal-up">
+            <span class="timeline__years">2018 — 2020</span>
+            <div>
+              <p class="timeline__role">Software Engineer</p>
+              <p class="timeline__company">Thornfield Digital — Boston, MA</p>
+            </div>
+          </div>
+
+          <div class="timeline__entry reveal-up">
+            <span class="timeline__years">2014 — 2018</span>
+            <div>
+              <p class="timeline__role">B.S. Computer Science</p>
+              <p class="timeline__company">Northeastern University — Boston, MA</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PERSONAL NOTE -->
+      <div class="personal-note reveal-up">
+        <p>
+          Outside of work I'm usually cycling, reading long books about things I don't fully
+          understand, or arguing with myself about whether <em>Moby Dick</em> is actually good.
+          I believe strongly that the best engineers are curious people first.
+        </p>
+      </div>
+
+    </main>
+
+    <footer class="footer">
+      <div class="footer__row">
+        <span class="footer__copy">© 2025 Beau Cooper</span>
+        <span class="footer__social">
+          <a href="mailto:hello@alexmercer.dev">Email</a> /
+          <a href="https://linkedin.com/in/alexmercer" target="_blank" rel="noopener">LinkedIn</a> /
+          <a href="https://github.com/alexmercer" target="_blank" rel="noopener">GitHub</a>
+        </span>
+      </div>
+      <p class="footer__credit">Set in Playfair Display, Lora &amp; JetBrains Mono</p>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.9/dist/lenis.min.js"></script>
+  <script>gsap.registerPlugin(ScrollTrigger);</script>
+  <script src="js/main.js"></script>
+</body>
+</html>
