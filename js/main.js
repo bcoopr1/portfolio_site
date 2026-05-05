@@ -60,38 +60,295 @@ function initNav() {
   });
 }
 
-// ── ASCII glitch animation (hero) ─────────
-function initAsciiGlitch() {
+// ── Time of day helpers ───────────────────
+function getIsNight() {
+  const h = new Date().getHours();
+  return h >= 20 || h < 6;
+}
+
+function applyHeroTheme() {
+  const hero = document.querySelector('.hero');
+  if (hero && getIsNight()) hero.classList.add('hero--night');
+}
+
+// ── ASCII mountain background (hero) ──────
+function initAsciiMountains() {
   const el = document.querySelector('.hero__ascii');
   if (!el) return;
 
-  const chars = '░▒▓█▒░▓█░▒▓';
-  const rows = 3;
-  const cols = Math.floor(window.innerWidth / 11);
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
 
-  function makeRow() {
-    return Array.from({ length: cols }, () =>
-      chars[Math.floor(Math.random() * chars.length)]
-    ).join('');
+  // Match CSS: clamp(0.55rem, 1vw, 0.85rem), line-height 1.25
+  const fs = Math.min(Math.max(vw * 0.01, 8.8), 13.6);
+  const cols = Math.floor(vw / (fs * 0.62));
+  const rows = Math.floor(vh / (fs * 1.25));
+
+  function wave(c, harmonics) {
+    const t = c / Math.max(cols - 1, 1);
+    return harmonics.reduce((s, [f, a, p]) => s + a * Math.sin(Math.PI * f * t + p), 0);
   }
 
-  function buildBlock() {
-    return Array.from({ length: rows }, makeRow).join('\n');
+  function makeRidge(harmonics, yStart, ySpan) {
+    const raw = Array.from({ length: cols }, (_, c) => wave(c, harmonics));
+    const lo = Math.min(...raw);
+    const range = Math.max(...raw) - lo || 1;
+    return raw.map(v =>
+      Math.round(yStart * rows + (1 - (v - lo) / range) * ySpan * rows)
+    );
   }
 
-  el.textContent = buildBlock();
+  // Near ridgeline: dominant foreground peaks
+  const near = makeRidge(
+    [[2.0, 0.40, 0.5], [4.5, 0.25, 1.8], [8.5, 0.15, 0.9], [15, 0.10, 2.4], [25, 0.05, 1.1]],
+    0.38, 0.45
+  );
 
-  // Slow random character swap
-  setInterval(() => {
-    const lines = el.textContent.split('\n');
-    const lineIdx = Math.floor(Math.random() * lines.length);
-    const line = lines[lineIdx];
-    const charIdx = Math.floor(Math.random() * line.length);
-    const newChar = chars[Math.floor(Math.random() * chars.length)];
-    lines[lineIdx] =
-      line.substring(0, charIdx) + newChar + line.substring(charIdx + 1);
-    el.textContent = lines.join('\n');
-  }, 80);
+  // Far ridgeline: distant background peaks
+  const far = makeRidge(
+    [[1.6, 0.32, 1.3], [3.8, 0.20, 0.2], [7.0, 0.12, 2.0], [12, 0.07, 1.6]],
+    0.25, 0.28
+  );
+
+  function slopeChar(ridge, c, flat) {
+    const m = ridge[c];
+    const l = ridge[c - 1] ?? m;
+    const r = ridge[c + 1] ?? m;
+    if (l > m && r > m) return '^';
+    if (l > m) return '/';
+    if (r > m) return '\\';
+    return flat;
+  }
+
+  // Build target character grid
+  const isNight = getIsNight();
+
+  const target = Array.from({ length: rows }, (_, r) =>
+    Array.from({ length: cols }, (_, c) => {
+      const n = near[c], f = far[c];
+
+      // Near mountain body / ground line
+      if (r > n) return r >= rows - 1 ? '_' : (isNight ? ' ' : '.');
+      // Near ridgeline
+      if (r === n) return slopeChar(near, c, '_');
+      // Far mountain body — dark silhouette at night
+      if (r > f) return isNight ? ' ' : '`';
+      // Far ridgeline
+      if (r === f) return slopeChar(far, c, '.');
+
+      // Sky: sprinkle stars at night
+      if (isNight) {
+        const p = Math.random();
+        if (p < 0.022) return '*';
+        if (p < 0.050) return '.';
+      }
+      return ' ';
+    })
+  );
+
+  // Initialize with mountain-ish noise so the transition feels organic
+  const noiseChars = "/\\^._-~'`.";
+  const current = Array.from({ length: rows }, () =>
+    Array.from({ length: cols }, () => noiseChars[Math.floor(Math.random() * noiseChars.length)])
+  );
+
+  let dirty = false;
+  let running = true;
+
+  const tick = () => {
+    if (dirty) { el.textContent = current.map(r => r.join('')).join('\n'); dirty = false; }
+    if (running) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+
+  // Columns crystallize in random order over ~1.3s, starting at 0.5s
+  const colOrder = Array.from({ length: cols }, (_, i) => i).sort(() => Math.random() - 0.5);
+  colOrder.forEach((c, i) => {
+    setTimeout(() => {
+      for (let r = 0; r < rows; r++) current[r][c] = target[r][c];
+      dirty = true;
+    }, 500 + (i / cols) * 1300);
+  });
+
+  setTimeout(() => {
+    running = false;
+    el.textContent = current.map(r => r.join('')).join('\n');
+  }, 1950);
+}
+
+// ── ASCII bird flyby ──────────────────────
+function initBird() {
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+
+  const framesR = ['\\o/', '-o-', '/o\\'];
+  const framesL = ['/o\\', '-o-', '\\o/'];
+
+  function launch() {
+    const bird = document.createElement('div');
+    bird.className = 'hero__bird';
+    bird.setAttribute('aria-hidden', 'true');
+    hero.appendChild(bird);
+    bird.style.top = '0px';
+    bird.style.left = '0px';
+
+    const goRight = Math.random() > 0.5;
+    const frames = goRight ? framesR : framesL;
+    const dur = 14 + Math.random() * 8;
+    const vw = window.innerWidth;
+    const heroH = hero.clientHeight;
+    const startX = goRight ? -40 : vw + 40;
+    const endX   = goRight ? vw + 40 : -40;
+
+    // Base altitude in sky zone (8–30% from top), then 2–4 drift waypoints
+    const baseY = heroH * (0.08 + Math.random() * 0.22);
+    const numPts = 2 + Math.floor(Math.random() * 3);
+    const yPath = Array.from({ length: numPts }, () =>
+      baseY + (Math.random() - 0.5) * heroH * 0.10
+    );
+
+    gsap.set(bird, { x: startX, y: baseY, opacity: 0 });
+    bird.textContent = frames[0];
+
+    let fi = 0;
+    const flapId = setInterval(() => {
+      fi = (fi + 1) % frames.length;
+      bird.textContent = frames[fi];
+    }, 260);
+
+    const tl = gsap.timeline({
+      onComplete: () => { clearInterval(flapId); bird.remove(); }
+    });
+
+    // Linear x, undulating y through waypoints
+    tl.to(bird, { x: endX, duration: dur, ease: 'none' }, 0);
+    const segDur = dur / numPts;
+    yPath.forEach((y, i) => {
+      tl.to(bird, { y, duration: segDur, ease: 'sine.inOut' }, i * segDur);
+    });
+
+    tl.to(bird, { opacity: 0.55, duration: 1.5 }, 0);
+    tl.to(bird, { opacity: 0, duration: 2 }, dur - 2);
+  }
+
+  setTimeout(launch, 4000 + Math.random() * 4000);
+  setInterval(() => setTimeout(launch, Math.random() * 3000), 14000);
+}
+
+// ── ASCII drone arc ───────────────────────
+function initDrone() {
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+
+  // Four-frame spinning propeller cycle
+  const spinFrames = ['-(=)-', '\\(=)/', '|(=)|', '/(=)\\'];
+
+  function launch() {
+    const drone = document.createElement('div');
+    drone.className = 'hero__drone';
+    drone.setAttribute('aria-hidden', 'true');
+    hero.appendChild(drone);
+    drone.style.top = '0px';
+    drone.style.left = '0px';
+
+    const heroH = hero.clientHeight;
+    const vw = window.innerWidth;
+    const goRight = Math.random() > 0.5;
+
+    // Start/end near mountain tops, peak high in sky
+    const groundY = heroH * (0.62 + Math.random() * 0.12);
+    const peakY   = heroH * (0.05 + Math.random() * 0.14);
+    const dur = 20 + Math.random() * 10;
+    const startX = goRight ? -60 : vw + 60;
+    const endX   = goRight ? vw + 60 : -60;
+
+    gsap.set(drone, { x: startX, y: groundY, opacity: 0 });
+    drone.textContent = spinFrames[0];
+
+    let fi = 0;
+    const spinId = setInterval(() => {
+      fi = (fi + 1) % spinFrames.length;
+      drone.textContent = spinFrames[fi];
+    }, 130);
+
+    const tl = gsap.timeline({
+      onComplete: () => { clearInterval(spinId); drone.remove(); }
+    });
+
+    // Linear horizontal travel
+    tl.to(drone, { x: endX, duration: dur, ease: 'none' }, 0);
+
+    // Arc: rise to sky, then descend back behind mountain ridge
+    tl.to(drone, { y: peakY, duration: dur * 0.38, ease: 'power2.out' }, 0);
+    tl.to(drone, { y: groundY + heroH * 0.05, duration: dur * 0.62, ease: 'power2.in' }, dur * 0.38);
+
+    // Fade in, then fade out as it descends behind the peaks
+    tl.to(drone, { opacity: 0.60, duration: 1.8 }, 0);
+    tl.to(drone, { opacity: 0, duration: dur * 0.28 }, dur * 0.70);
+  }
+
+  // First drone after 12–20 s, then every ~28 s
+  setTimeout(launch, 12000 + Math.random() * 8000);
+  setInterval(() => setTimeout(launch, Math.random() * 5000), 28000);
+}
+
+// ── Sun / moon / clouds ───────────────────
+function initSky() {
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+
+  const isNight = getIsNight();
+
+  if (isNight) {
+    // Crescent moon — static, fades in with the scene
+    const moon = document.createElement('div');
+    moon.className = 'hero__celestial';
+    moon.setAttribute('aria-hidden', 'true');
+    moon.textContent = " _\n/ )\n\\_)";
+    moon.style.top  = (10 + Math.random() * 8) + '%';
+    moon.style.left = (18 + Math.random() * 50) + '%';
+    hero.appendChild(moon);
+    setTimeout(() => gsap.to(moon, { opacity: 0.55, duration: 2.5 }), 900);
+
+  } else {
+    // Sun — static upper-right
+    const sun = document.createElement('div');
+    sun.className = 'hero__celestial';
+    sun.setAttribute('aria-hidden', 'true');
+    sun.textContent = "\\|/\n-O-\n/|\\";
+    sun.style.top   = (8 + Math.random() * 5) + '%';
+    sun.style.right = (14 + Math.random() * 8) + '%';
+    hero.appendChild(sun);
+    setTimeout(() => gsap.to(sun, { opacity: 0.32, duration: 2.5 }), 900);
+
+    // Drifting clouds
+    const cloudShapes = ['(   )', '( ~~ )', '(  ~~  )', '(~~~~~)', '( ~ ~ )'];
+
+    function spawnCloud() {
+      const cloud = document.createElement('div');
+      cloud.className = 'hero__cloud';
+      cloud.setAttribute('aria-hidden', 'true');
+      cloud.textContent = cloudShapes[Math.floor(Math.random() * cloudShapes.length)];
+
+      const goRight = Math.random() > 0.5;
+      const dur = 55 + Math.random() * 45;
+      const vw = window.innerWidth;
+
+      cloud.style.top  = (8 + Math.random() * 24) + '%';
+      cloud.style.left = '0px';
+      hero.appendChild(cloud);
+
+      gsap.set(cloud, { x: goRight ? -140 : vw + 140 });
+      gsap.to(cloud, { x: goRight ? vw + 140 : -140, duration: dur, ease: 'none',
+        onComplete: () => cloud.remove() });
+      gsap.to(cloud, { opacity: 0.24, duration: 5 });
+      gsap.to(cloud, { opacity: 0, duration: 6, delay: dur - 6 });
+    }
+
+    // First cloud almost immediately, then every ~35 s
+    setTimeout(spawnCloud, 500 + Math.random() * 2000);
+    setInterval(() => setTimeout(spawnCloud, Math.random() * 5000), 35000);
+  }
 }
 
 // ── Hero entrance animation ───────────────
@@ -104,8 +361,10 @@ function initHeroAnimation() {
 
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
+  const asciiOpacity = getIsNight() ? 0.58 : 0.44;
+
   tl.to(inner, { y: '0%', duration: 1.1, delay: 0.1 })
-    .to(ascii, { opacity: 0.18, duration: 0.6 }, '-=0.4')
+    .to(ascii, { opacity: asciiOpacity, duration: 0.6 }, '-=0.4')
     .to(role, { opacity: 1, y: 0, duration: 0.7 }, '-=0.3');
 }
 
@@ -267,8 +526,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Only init Lenis if the library is loaded
   if (typeof Lenis !== 'undefined') initLenis();
 
+  applyHeroTheme();
   initNav();
-  initAsciiGlitch();
+  initAsciiMountains();
+  initBird();
+  initDrone();
+  initSky();
   initHeroAnimation();
   initPageHeader();
   initScrollReveal();

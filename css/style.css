@@ -314,6 +314,7 @@ code {
   padding: 0 2rem;
   position: relative;
   overflow: hidden;
+  background: linear-gradient(175deg, #dbeaf7 0%, #e8f2f9 30%, #f5f2eb 100%);
 }
 
 .hero__headline {
@@ -323,6 +324,8 @@ code {
   line-height: 0.95;
   letter-spacing: -0.03em;
   overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 
 .hero__headline-inner {
@@ -331,16 +334,19 @@ code {
 }
 
 .hero__ascii {
+  position: absolute;
+  inset: 0;
   font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(0.6rem, 1.2vw, 1rem);
+  font-size: clamp(0.55rem, 1vw, 0.85rem);
+  line-height: 1.25;
+  letter-spacing: 0;
   color: var(--text);
   opacity: 0;
-  line-height: 1.4;
-  margin: 1.25rem 0;
-  letter-spacing: 0.05em;
   white-space: pre;
   overflow: hidden;
   user-select: none;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .hero__role {
@@ -351,6 +357,35 @@ code {
   color: var(--text-muted);
   opacity: 0;
   transform: translateY(12px);
+  position: relative;
+  z-index: 1;
+}
+
+.hero__bird,
+.hero__drone {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(0.7rem, 1.3vw, 1.05rem);
+  color: var(--text);
+  opacity: 0;
+  white-space: pre;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero__celestial,
+.hero__cloud {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(0.7rem, 1.3vw, 1.05rem);
+  line-height: 1.25;
+  color: var(--text);
+  opacity: 0;
+  white-space: pre;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .hero__scroll-cue {
@@ -362,11 +397,40 @@ code {
   font-size: 1.2rem;
   color: var(--text-muted);
   animation: bounce 2s ease-in-out infinite;
+  z-index: 2;
 }
 
 @keyframes bounce {
   0%, 100% { transform: translateX(-50%) translateY(0); }
   50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ── Night mode (hero only) ─────────────── */
+.hero--night {
+  background: linear-gradient(175deg, #070b16 0%, #0d1020 55%, #131228 100%);
+}
+
+.hero--night .hero__ascii {
+  color: #cdc7e0;
+}
+
+.hero--night .hero__headline {
+  color: #f0ecf8;
+}
+
+.hero--night .hero__role {
+  color: #9088b0;
+}
+
+.hero--night .hero__scroll-cue {
+  color: #5c5480;
+}
+
+.hero--night .hero__bird,
+.hero--night .hero__drone,
+.hero--night .hero__celestial,
+.hero--night .hero__cloud {
+  color: #cdc7e0;
 }
 
 /* =========================================
