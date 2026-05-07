@@ -521,6 +521,7 @@ function initProjectDetail() {
   });
 }
 
+
 // ── Init ─────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   // Only init Lenis if the library is loaded

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact — Beau Cooper</title>
+  <title>Contact - Beau Cooper</title>
   <meta name="description" content="Get in touch with Beau Cooper, Engineer." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,7 +24,7 @@
       <a href="skills.html" class="nav__link">Skills</a>
       <a href="resume.html" class="nav__link">Résumé</a>
       <a href="contact.html" class="nav__link">Contact</a>
-      <a href="mailto:hello@alexmercer.dev" class="nav__cta">Let's talk</a>
+      <a href="mailto:beaucooper.41@gmail.com" class="nav__cta">Let's talk</a>
     </div>
     <button class="nav__hamburger" aria-label="Open menu">
       <span></span><span></span><span></span>
@@ -62,40 +62,69 @@
         <div class="contact-methods">
           <div class="contact-method">
             <span class="contact-method__label">Email</span>
-            <a href="mailto:hello@alexmercer.dev" class="contact-method__value">hello@alexmercer.dev</a>
+            <a href="mailto:beaucooper.41@gmail.com" class="contact-method__value">beaucooper.41@gmail.com</a>
           </div>
           <div class="contact-method">
             <span class="contact-method__label">LinkedIn</span>
-            <a href="https://linkedin.com/in/alexmercer" target="_blank" rel="noopener" class="contact-method__value">linkedin.com/in/alexmercer</a>
+            <a href="https://linkedin.com/in/beaucooper" target="_blank" rel="noopener" class="contact-method__value">linkedin.com/in/beaucooper</a>
           </div>
           <div class="contact-method">
             <span class="contact-method__label">GitHub</span>
-            <a href="https://github.com/alexmercer" target="_blank" rel="noopener" class="contact-method__value">github.com/alexmercer</a>
-          </div>
-          <div class="contact-method">
-            <span class="contact-method__label">Twitter</span>
-            <a href="https://twitter.com/alexmercer" target="_blank" rel="noopener" class="contact-method__value">@alexmercer</a>
+            <a href="https://github.com/bcoopr1" target="_blank" rel="noopener" class="contact-method__value">github.com/bcoopr1</a>
           </div>
         </div>
 
         <!-- Contact form -->
-        <form class="contact-form reveal-up" onsubmit="return false;">
+        <form class="contact-form reveal-up" id="contact-form">
           <div class="form-field">
             <label for="name">Name</label>
-            <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name" />
+            <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name" required />
           </div>
           <div class="form-field">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="your@email.com" autocomplete="email" />
+            <input type="email" id="email" name="email" placeholder="your@email.com" autocomplete="email" required />
           </div>
           <div class="form-field">
             <label for="message">Message</label>
-            <textarea id="message" name="message" placeholder="Tell me about your project…"></textarea>
+            <textarea id="message" name="message" placeholder="Tell me about your project…" required></textarea>
           </div>
-          <button type="submit" class="form-submit">Send message →</button>
+          <button type="submit" class="form-submit" id="form-submit-btn">Send message →</button>
         </form>
 
-        <p class="contact-location">Based in Texas — available worldwide</p>
+        <script>
+          // Replace this URL with your Google Apps Script web app URL after deploying
+          const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5vcrAZYmQG9VW71qia0sMeO8An1f8ldj7YJfu6IQPCQEppOtWP1uWG7u5YSjgJX-nJA/exec';
+
+          document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('form-submit-btn');
+            const form = e.target;
+
+            btn.textContent = 'Sending…';
+            btn.disabled = true;
+
+            fetch(SCRIPT_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: form.name.value,
+                email: form.email.value,
+                message: form.message.value
+              })
+            })
+            .then(function() {
+              form.reset();
+              btn.textContent = 'Message sent ✓';
+            })
+            .catch(function() {
+              btn.textContent = 'Something went wrong - email me directly';
+              btn.disabled = false;
+            });
+          });
+        </script>
+
+        <p class="contact-location">Based in Texas - available worldwide</p>
 
       </div>
 
@@ -105,9 +134,9 @@
       <div class="footer__row">
         <span class="footer__copy">© 2025 Beau Cooper</span>
         <span class="footer__social">
-          <a href="mailto:hello@alexmercer.dev">Email</a> /
-          <a href="https://linkedin.com/in/alexmercer" target="_blank" rel="noopener">LinkedIn</a> /
-          <a href="https://github.com/alexmercer" target="_blank" rel="noopener">GitHub</a>
+          <a href="mailto:beaucooper.41@gmail.com">Email</a> /
+          <a href="https://linkedin.com/in/beaucooper" target="_blank" rel="noopener">LinkedIn</a> /
+          <a href="https://github.com/bcoopr1" target="_blank" rel="noopener">GitHub</a>
         </span>
       </div>
       <p class="footer__credit">Set in Playfair Display, Lora &amp; JetBrains Mono</p>

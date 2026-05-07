@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shepherd - Beau Cooper</title>
-  <meta name="description" content="Shepherd AI - self-hosted email workflow agent for real estate teams. A project by Beau Cooper." />
+  <title>Class Projects - Beau Cooper</title>
+  <meta name="description" content="AI &amp; MIS coursework projects by Beau Cooper at Baylor University." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -46,58 +46,51 @@
 
         <a href="projects.html" class="project-detail__back">← All projects</a>
 
-        <h1 class="project-detail__title">Shepherd</h1>
-        <p class="project-detail__meta">2025 · Lead Developer · n8n · RAG · PostgreSQL · Gemini</p>
+        <h1 class="project-detail__title">Class Projects</h1>
+        <p class="project-detail__meta">2026 · Full-Stack · LangChain · Django · n8n · SQL</p>
 
         <div class="project-detail__desc">
           <p>
-            Shepherd AI is a self-hosted email workflow agent I built for real estate teams to manage high-volume inboxes, organize client communication, and quickly retrieve important documents. The system connected to Microsoft 365 through OAuth, classified incoming emails, and stored key files in a local PostgreSQL vector database. I used n8n as the workflow automation layer to route emails, trigger classification steps, manage document ingestion, and support a RAG chatbot that allowed users to search their inbox and related files through natural language. 
+            During my Management Information Systems degree at Baylor, two courses in particular pushed me from theory into genuine applied work. Professor Bhojwani's SQL and AI Implementation class gave me a structured introduction to database design and query optimization alongside hands-on exposure to generative AI tooling. The projects in that class were the first time I built something real with LLMs rather than just reading about them.
           </p>
           <p>
-            The goal of Shepherd AI was to help the end user query their email through a secured chatbot and retrieve important documents faster, especially during closing and filing processes where speed and organization matter. Instead of manually searching through long email threads, attachments, and client folders, the user could ask the chatbot for specific documents or context and receive relevant results pulled from the indexed database.
+            The centerpiece project was a LangChain-powered research assistant built on top of a Django backend, designed to answer domain-specific questions by retrieving context from a structured SQL database and passing it to an LLM for synthesis. The system used a retrieval-augmented approach where user queries were parsed, matched against indexed records, and returned as grounded natural-language responses rather than hallucinated outputs. A secondary project used n8n to automate a multi-step data ingestion and classification workflow, connecting an external API, a local database, and a notification layer without writing custom integration code for each step.
           </p>
           <p>
-            Shepherd AI ran successfully for eight months before I shut it down due to energy usage and time constraints. Even though the service is no longer active, the project strengthened my understanding of AI workflow automation, secure self-hosting, and practical document retrieval systems for business use cases.
+            These projects collectively shifted how I think about building with AI - less as a magic layer you drop in, and more as a structured component in a larger data pipeline. They also gave me a working vocabulary for the tools I now reach for on real client work, including Shepherd and Argus.
           </p>
         </div>
 
         <div class="project-detail__facts">
           <div class="project-detail__fact">
-            <span class="project-detail__fact-label">Client</span>
-            <span class="project-detail__fact-value">A ReMAX Realitor (confidential)</span>
+            <span class="project-detail__fact-label">Institution</span>
+            <span class="project-detail__fact-value">Baylor University - MIS Program</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Role</span>
-            <span class="project-detail__fact-value">Lead Developer - sole engineer</span>
+            <span class="project-detail__fact-value">Student</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Timeline</span>
-            <span class="project-detail__fact-value">2 months, 2025</span>
+            <span class="project-detail__fact-value">Spring 2026</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Stack</span>
-            <span class="project-detail__fact-value">Google Gemini API, M365 API, Azure, PostgresSQL (pgvector), n8n, Email Parsing, Vector Embeddings, HTML, Metadata Tagging, OAuth 2.0</span>
+            <span class="project-detail__fact-value">Python, Django, LangChain, n8n, PostgreSQL, OpenAI API, REST APIs, SQL</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Outcome</span>
-            <span class="project-detail__fact-value"> Increased email management -> more houses sold.</span>
+            <span class="project-detail__fact-value">Foundation for every AI project that followed.</span>
           </div>
         </div>
 
-
-        <div class="project-detail__images">
-          <p class="project-detail__image-label">Workflow - Email Classification Pipeline</p>
-          <img src="images/shepherd-workflow-1.png" alt="Shepherd AI email classification workflow in n8n" class="project-detail__image" />
-          <p class="project-detail__image-label">Workflow - Document Ingestion &amp; Vector Storage</p>
-          <img src="images/shepherd-workflow-2.png" alt="Shepherd AI document ingestion and embedding workflow in n8n" class="project-detail__image" />
-        </div>
-
         <div class="project-detail__links">
+          <a href="https://github.com/bcoopr1/aiclass" target="_blank" rel="noopener" class="link-arrow">View source →</a>
         </div>
 
         <nav class="project-nav">
-          <span class="project-nav__link project-nav__link--prev" style="opacity:0.3;">← Previous project</span>
-          <a href="project-detail-2.html" class="project-nav__link project-nav__link--next">Next project →</a>
+          <a href="project-detail-4.html" class="project-nav__link project-nav__link--prev">← Previous project</a>
+          <span class="project-nav__link project-nav__link--next" style="opacity:0.3;">Next project →</span>
         </nav>
 
       </div>

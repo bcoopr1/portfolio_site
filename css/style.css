@@ -1054,6 +1054,26 @@ code {
   color: var(--text);
 }
 
+.project-detail__images {
+  margin-bottom: 3rem;
+}
+
+.project-detail__image-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.project-detail__image {
+  width: 100%;
+  display: block;
+  border: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
 .project-detail__links {
   display: flex;
   gap: 2rem;

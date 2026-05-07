@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shepherd - Beau Cooper</title>
-  <meta name="description" content="Shepherd AI - self-hosted email workflow agent for real estate teams. A project by Beau Cooper." />
+  <title>Homelab - Beau Cooper</title>
+  <meta name="description" content="Homelab - self-hosted infrastructure project by Beau Cooper." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -46,58 +46,51 @@
 
         <a href="projects.html" class="project-detail__back">← All projects</a>
 
-        <h1 class="project-detail__title">Shepherd</h1>
-        <p class="project-detail__meta">2025 · Lead Developer · n8n · RAG · PostgreSQL · Gemini</p>
+        <h1 class="project-detail__title">Homelab</h1>
+        <p class="project-detail__meta">2025 · Architect · Proxmox · Wazuh · Kali Linux · Tailscale</p>
 
         <div class="project-detail__desc">
           <p>
-            Shepherd AI is a self-hosted email workflow agent I built for real estate teams to manage high-volume inboxes, organize client communication, and quickly retrieve important documents. The system connected to Microsoft 365 through OAuth, classified incoming emails, and stored key files in a local PostgreSQL vector database. I used n8n as the workflow automation layer to route emails, trigger classification steps, manage document ingestion, and support a RAG chatbot that allowed users to search their inbox and related files through natural language. 
+            I built this homelab on an HP ProDesk 400 G4 running Proxmox so I could have multiple VMs running at the same time without breaking the bank. The first thing I set up was Pi-hole for DNS and the data it showed me was honestly shocking. My Amazon Fire Stick was responsible for 30-40% of all blocked requests. I never thought a company would package their ads inside their own domain just to get around a DNS block, but here we are. The overall block rate sits around 80% which really opened my eyes to how much data these companies try to collect.
           </p>
           <p>
-            The goal of Shepherd AI was to help the end user query their email through a secured chatbot and retrieve important documents faster, especially during closing and filing processes where speed and organization matter. Instead of manually searching through long email threads, attachments, and client folders, the user could ask the chatbot for specific documents or context and receive relevant results pulled from the indexed database.
+            Setting up Wazuh was by far the hardest part of the whole project and took the better part of a week. It has three parts that all need to talk to each other and getting them to do that was a nightmare. After deleting and rebuilding the VM more than once the fix ended up being the most obvious thing I had overlooked the entire time. The config file just was not updating with the right IP address. Once I caught that, everything connected and I got agents running on all my machines. I use my Kali Pi 5 to scan my own network and then use whatever I find to tune my Wazuh rules and update my Pi-hole blocklist.
           </p>
           <p>
-            Shepherd AI ran successfully for eight months before I shut it down due to energy usage and time constraints. Even though the service is no longer active, the project strengthened my understanding of AI workflow automation, secure self-hosting, and practical document retrieval systems for business use cases.
+            One of my Pi Zero 2Ws runs OctoPrint on a broken Ender 3-V2 I picked up from a friend for $50. I can monitor prints and check the camera feed from anywhere through Tailscale. Next up is buying my own router to run pfSense and actually segment my network properly. I also have a solar panel tracker project in the works using photoresistors and servos so I can keep my battery bank charged on road trips without having to aim the panel by hand.
           </p>
         </div>
 
         <div class="project-detail__facts">
           <div class="project-detail__fact">
-            <span class="project-detail__fact-label">Client</span>
-            <span class="project-detail__fact-value">A ReMAX Realitor (confidential)</span>
+            <span class="project-detail__fact-label">Type</span>
+            <span class="project-detail__fact-value">Personal infrastructure, ongoing</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Role</span>
-            <span class="project-detail__fact-value">Lead Developer - sole engineer</span>
+            <span class="project-detail__fact-value">Architect, sole operator</span>
           </div>
           <div class="project-detail__fact">
-            <span class="project-detail__fact-label">Timeline</span>
-            <span class="project-detail__fact-value">2 months, 2025</span>
+            <span class="project-detail__fact-label">Hardware</span>
+            <span class="project-detail__fact-value">HP ProDesk 400 G4, Raspberry Pi 5, 2x Raspberry Pi Zero 2W, Netgear 5-port switch</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Stack</span>
-            <span class="project-detail__fact-value">Google Gemini API, M365 API, Azure, PostgresSQL (pgvector), n8n, Email Parsing, Vector Embeddings, HTML, Metadata Tagging, OAuth 2.0</span>
+            <span class="project-detail__fact-value">Proxmox, Pi-hole (156,735 blocked domains), Tailscale VPN, Wazuh, Kali Linux, Airgeddon, OctoPrint, Debian 12, Ubuntu 24.04</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Outcome</span>
-            <span class="project-detail__fact-value"> Increased email management -> more houses sold.</span>
+            <span class="project-detail__fact-value">About 80% of DNS queries blocked. Wazuh running with 5 agents connected. Still going.</span>
           </div>
         </div>
 
-
-        <div class="project-detail__images">
-          <p class="project-detail__image-label">Workflow - Email Classification Pipeline</p>
-          <img src="images/shepherd-workflow-1.png" alt="Shepherd AI email classification workflow in n8n" class="project-detail__image" />
-          <p class="project-detail__image-label">Workflow - Document Ingestion &amp; Vector Storage</p>
-          <img src="images/shepherd-workflow-2.png" alt="Shepherd AI document ingestion and embedding workflow in n8n" class="project-detail__image" />
-        </div>
-
         <div class="project-detail__links">
+          <a href="https://medium.com/@beaucooper143/homelab-writeup-c5c4bbb14c65" target="_blank" rel="noopener" class="link-arrow">Read the full writeup →</a>
         </div>
 
         <nav class="project-nav">
-          <span class="project-nav__link project-nav__link--prev" style="opacity:0.3;">← Previous project</span>
-          <a href="project-detail-2.html" class="project-nav__link project-nav__link--next">Next project →</a>
+          <a href="project-detail-3.html" class="project-nav__link project-nav__link--prev">← Previous project</a>
+          <a href="project-detail-5.html" class="project-nav__link project-nav__link--next">Next project →</a>
         </nav>
 
       </div>

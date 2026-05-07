@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Foundry — Beau Cooper</title>
-  <meta name="description" content="Foundry — enterprise design system. A project by Beau Cooper." />
+  <title>Argus - Beau Cooper</title>
+  <meta name="description" content="Argus - off-grid land management system. A project by Beau Cooper." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,7 +24,7 @@
       <a href="skills.html" class="nav__link">Skills</a>
       <a href="resume.html" class="nav__link">Résumé</a>
       <a href="contact.html" class="nav__link">Contact</a>
-      <a href="mailto:hello@alexmercer.dev" class="nav__cta">Let's talk</a>
+      <a href="mailto:beaucooper.41@gmail.com" class="nav__cta">Let's talk</a>
     </div>
     <button class="nav__hamburger" aria-label="Open menu">
       <span></span><span></span><span></span>
@@ -51,55 +51,40 @@
 
         <div class="project-detail__desc">
           <p>
-            Foundry is a component library and design system built for a 120-person software company
-            that had accumulated four years of inconsistent UI patterns across twelve product
-            surfaces. Every team had their own button. Some had three. The design and engineering
-            orgs were spending more time arguing about components than building features.
+            Argus is an off-grid land management system I am currently building for landowners in North Texas who need to monitor and manage large properties without reliable cell service or power infrastructure. The core idea is a LoRa mesh network where battery-powered nodes spread across the property send sensor data back to a central base station without needing any internet connection on site.
           </p>
           <p>
-            I led the architecture from scratch: a token-based design system where all visual
-            decisions — spacing, color, radius, shadow — live in CSS custom properties defined once
-            and consumed everywhere. The component library is written in React and TypeScript, with
-            Storybook as the primary documentation surface. Every component ships with accessibility
-            attributes, keyboard navigation, and a thorough story matrix covering all variants and
-            states.
+            Right now I am working through the firmware side of the project. Each node is written in C++ and handles reading sensors, packaging the data into JSON, and relaying it across the mesh to the next node until it reaches the base. The base station runs a Flask server in Python that collects the incoming data, stores it, and serves a simple dashboard so the landowner can check on things from their phone or laptop when they get back in range.
           </p>
           <p>
-            The hardest part wasn't the engineering — it was the adoption strategy. We used a
-            "strangler fig" approach: the new components shadowed the old ones in the codebase,
-            and teams migrated surface by surface over a four-month period. I wrote the migration
-            guide and ran weekly office hours. Twelve months in, Foundry powers 100% of the
-            company's product surfaces, and the design/engineering handoff process has been
-            cut from three rounds of revision to one.
+            The biggest challenge so far has been getting reliable message routing across the mesh when nodes are spread out over several miles. Range and power draw are constantly fighting each other and finding the right balance is still a work in progress. The goal when it ships is to give landowners real visibility into their property without having to drive it every time they want to know what is going on.
           </p>
         </div>
 
         <div class="project-detail__facts">
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Client</span>
-            <span class="project-detail__fact-value">Land Owners in North Texas</span>
+            <span class="project-detail__fact-value">Land owners in North Texas</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Role</span>
             <span class="project-detail__fact-value">Lead Engineer</span>
           </div>
           <div class="project-detail__fact">
-            <span class="project-detail__fact-label">Timeline</span>
-            <span class="project-detail__fact-value">6 months build, 4 months rollout, Late 2026</span>
+            <span class="project-detail__fact-label">Status</span>
+            <span class="project-detail__fact-value">In development, 2026</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Stack</span>
-            <span class="project-detail__fact-value">Python, JSON, Flask, LoRa, C++ </span>
+            <span class="project-detail__fact-value">C++, Python, Flask, LoRa, JSON</span>
           </div>
           <div class="project-detail__fact">
-            <span class="project-detail__fact-label">Outcome</span>
-            <span class="project-detail__fact-value">Long Range connectivity and IoT control</span>
+            <span class="project-detail__fact-label">Goal</span>
+            <span class="project-detail__fact-value">Long range off-grid IoT monitoring across large rural properties</span>
           </div>
         </div>
 
         <div class="project-detail__links">
-          <a href="#" class="link-arrow">View Storybook →</a>
-          <a href="#" class="link-arrow">View source →</a>
         </div>
 
         <nav class="project-nav">
@@ -114,9 +99,9 @@
       <div class="footer__row">
         <span class="footer__copy">© 2025 Beau Cooper</span>
         <span class="footer__social">
-          <a href="mailto:hello@alexmercer.dev">Email</a> /
-          <a href="https://linkedin.com/in/alexmercer" target="_blank" rel="noopener">LinkedIn</a> /
-          <a href="https://github.com/alexmercer" target="_blank" rel="noopener">GitHub</a>
+          <a href="mailto:beaucooper.41@gmail.com">Email</a> /
+          <a href="https://linkedin.com/in/beaucooper" target="_blank" rel="noopener">LinkedIn</a> /
+          <a href="https://github.com/bcoopr1" target="_blank" rel="noopener">GitHub</a>
         </span>
       </div>
       <p class="footer__credit">Set in Playfair Display, Lora &amp; JetBrains Mono</p>
