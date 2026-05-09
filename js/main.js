@@ -304,9 +304,17 @@ function initSky() {
     const moon = document.createElement('div');
     moon.className = 'hero__celestial';
     moon.setAttribute('aria-hidden', 'true');
-    moon.textContent = " _\n/ )\n\\_)";
-    moon.style.top  = (10 + Math.random() * 8) + '%';
-    moon.style.left = (18 + Math.random() * 50) + '%';
+    moon.textContent = [
+      "         _.._",
+      "       .' .-'`",
+      "      /  /",
+      "      |  |",
+      "      \\  \\",
+      "       '._'-._",
+      "          `\`\`",
+    ].join('\n');
+    moon.style.top  = (6 + Math.random() * 10) + '%';
+    moon.style.left = (14 + Math.random() * 45) + '%';
     hero.appendChild(moon);
     setTimeout(() => gsap.to(moon, { opacity: 0.55, duration: 2.5 }), 900);
 
