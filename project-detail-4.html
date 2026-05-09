@@ -49,16 +49,21 @@
         <h1 class="project-detail__title">Homelab</h1>
         <p class="project-detail__meta">2025 · Architect · Proxmox · Wazuh · Kali Linux · Tailscale</p>
 
-        <div class="project-detail__desc">
-          <p>
-            I built this homelab on an HP ProDesk 400 G4 running Proxmox so I could have multiple VMs running at the same time without breaking the bank. The first thing I set up was Pi-hole for DNS and the data it showed me was honestly shocking. My Amazon Fire Stick was responsible for 30-40% of all blocked requests. I never thought a company would package their ads inside their own domain just to get around a DNS block, but here we are. The overall block rate sits around 80% which really opened my eyes to how much data these companies try to collect.
-          </p>
-          <p>
-            Setting up Wazuh was by far the hardest part of the whole project and took the better part of a week. It has three parts that all need to talk to each other and getting them to do that was a nightmare. After deleting and rebuilding the VM more than once the fix ended up being the most obvious thing I had overlooked the entire time. The config file just was not updating with the right IP address. Once I caught that, everything connected and I got agents running on all my machines. I use my Kali Pi 5 to scan my own network and then use whatever I find to tune my Wazuh rules and update my Pi-hole blocklist.
-          </p>
-          <p>
-            One of my Pi Zero 2Ws runs OctoPrint on a broken Ender 3-V2 I picked up from a friend for $50. I can monitor prints and check the camera feed from anywhere through Tailscale. Next up is buying my own router to run pfSense and actually segment my network properly. I also have a solar panel tracker project in the works using photoresistors and servos so I can keep my battery bank charged on road trips without having to aim the panel by hand.
-          </p>
+        <div class="project-desc-aside">
+          <div class="project-detail__desc">
+            <p>
+              I built this homelab on an HP ProDesk 400 G4 running Proxmox so I could have multiple VMs running at the same time without breaking the bank. The first thing I set up was Pi-hole for DNS and the data it showed me was honestly shocking. My Amazon Fire Stick was responsible for 30-40% of all blocked requests. I never thought a company would package their ads inside their own domain just to get around a DNS block, but here we are. The overall block rate sits around 80% which really opened my eyes to how much data these companies try to collect.
+            </p>
+            <p>
+              Setting up Wazuh was by far the hardest part of the whole project and took the better part of a week. It has three parts that all need to talk to each other and getting them to do that was a nightmare. After deleting and rebuilding the VM more than once the fix ended up being the most obvious thing I had overlooked the entire time. The config file just was not updating with the right IP address. Once I caught that, everything connected and I got agents running on all my machines. I use my Kali Pi 5 to scan my own network and then use whatever I find to tune my Wazuh rules and update my Pi-hole blocklist.
+            </p>
+            <p>
+              One of my Pi Zero 2Ws runs OctoPrint on a broken Ender 3-V2 I picked up from a friend for $50. I can monitor prints and check the camera feed from anywhere through Tailscale. Next up is buying my own router to run pfSense and actually segment my network properly. I also have a solar panel tracker project in the works using photoresistors and servos so I can keep my battery bank charged on road trips without having to aim the panel by hand.
+            </p>
+          </div>
+          <div class="homelab-art-wrap">
+            <pre class="homelab-art" aria-hidden="true"></pre>
+          </div>
         </div>
 
         <div class="project-detail__facts">

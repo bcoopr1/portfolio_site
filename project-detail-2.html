@@ -49,16 +49,21 @@
         <h1 class="project-detail__title">Argus</h1>
         <p class="project-detail__meta">2026 · Lead Engineer · LoRa · Python · Long Range Mesh Network </p>
 
-        <div class="project-detail__desc">
-          <p>
-            Argus is an off-grid land management system I am currently building for landowners in North Texas who need to monitor and manage large properties without reliable cell service or power infrastructure. The core idea is a LoRa mesh network where battery-powered nodes spread across the property send sensor data back to a central base station without needing any internet connection on site.
-          </p>
-          <p>
-            Right now I am working through the firmware side of the project. Each node is written in C++ and handles reading sensors, packaging the data into JSON, and relaying it across the mesh to the next node until it reaches the base. The base station runs a Flask server in Python that collects the incoming data, stores it, and serves a simple dashboard so the landowner can check on things from their phone or laptop when they get back in range.
-          </p>
-          <p>
-            The biggest challenge so far has been getting reliable message routing across the mesh when nodes are spread out over several miles. Range and power draw are constantly fighting each other and finding the right balance is still a work in progress. The goal when it ships is to give landowners real visibility into their property without having to drive it every time they want to know what is going on.
-          </p>
+        <div class="project-desc-aside">
+          <div class="project-detail__desc">
+            <p>
+              Argus is an off-grid land management system I am currently building for landowners in North Texas who need to monitor and manage large properties without reliable cell service or power infrastructure. The core idea is a LoRa mesh network where battery-powered nodes spread across the property send sensor data back to a central base station without needing any internet connection on site.
+            </p>
+            <p>
+              Right now I am working through the firmware side of the project. Each node is written in C++ and handles reading sensors, packaging the data into JSON, and relaying it across the mesh to the next node until it reaches the base. The base station runs a Flask server in Python that collects the incoming data, stores it, and serves a simple dashboard so the landowner can check on things from their phone or laptop when they get back in range.
+            </p>
+            <p>
+              The biggest challenge so far has been getting reliable message routing across the mesh when nodes are spread out over several miles. Range and power draw are constantly fighting each other and finding the right balance is still a work in progress. The goal when it ships is to give landowners real visibility into their property without having to drive it every time they want to know what is going on.
+            </p>
+          </div>
+          <div class="argus-nodes-wrap">
+            <pre class="argus-nodes" aria-hidden="true"></pre>
+          </div>
         </div>
 
         <div class="project-detail__facts">

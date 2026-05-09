@@ -602,9 +602,10 @@ code {
   padding: 4rem 2rem;
   border-bottom: 1px solid var(--border);
   display: grid;
-  grid-template-columns: minmax(0, var(--max-prose)) 1fr;
-  gap: 0 2rem;
+  grid-template-columns: var(--max-prose) minmax(200px, 480px);
+  gap: 0 4rem;
   align-items: start;
+  justify-content: center;
 }
 
 .about-bio__content {
@@ -1101,6 +1102,49 @@ code {
   display: flex;
   gap: 2rem;
   margin-bottom: 5rem;
+}
+
+.shepherd-desc-row,
+.project-desc-aside {
+  display: grid;
+  grid-template-columns: minmax(0, var(--max-prose)) auto;
+  gap: 0 3rem;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.shepherd-mail-wrap,
+.argus-nodes-wrap,
+.homelab-art-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.shepherd-mail,
+.argus-nodes,
+.homelab-art {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text);
+  opacity: 0.55;
+  white-space: pre;
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (max-width: 1000px) {
+  .shepherd-desc-row,
+  .project-desc-aside {
+    grid-template-columns: 1fr;
+  }
+  .shepherd-mail-wrap,
+  .argus-nodes-wrap,
+  .homelab-art-wrap {
+    display: none;
+  }
 }
 
 /* Project nav */

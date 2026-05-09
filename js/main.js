@@ -522,6 +522,378 @@ function initProjectDetail() {
 }
 
 
+// ── Node mesh animation (Argus page) ──────
+function initNodeAnimation() {
+  const el = document.querySelector('.argus-nodes');
+  if (!el) return;
+
+  const W = 55, H = 28;
+
+  // Three LoRa towers spread wide in a triangle.
+  // Tower (5w x 5h):  *  /  \|/  |  /|\  /   \
+  const TOWERS = [
+    { tr: 0,  tc: 25 },
+    { tr: 21, tc:  2 },
+    { tr: 21, tc: 48 },
+  ];
+
+  function line(r1, c1, r2, c2, n) {
+    return Array.from({ length: n }, (_, i) => [
+      Math.round(r1 + (r2 - r1) * i / (n - 1)),
+      Math.round(c1 + (c2 - c1) * i / (n - 1)),
+    ]);
+  }
+
+  // Invisible paths — only packets appear, flying through open space
+  const PATHS = [
+    { pts: line(5, 27, 21, 5,  17) },
+    { pts: line(5, 27, 21, 51, 17) },
+    { pts: line(23, 8, 23, 50, 20) },
+  ];
+
+  // Grass — deterministic seeded positions across the full canvas
+  const GRASS = [];
+  const GCHARS = [',', "'", '.', '`', ','];
+  for (let r = 0; r < H; r++) {
+    for (let c = 0; c < W; c++) {
+      const h = (r * 71 + c * 37) % 100;
+      if (h < 18) GRASS.push([r, c, GCHARS[h % 5]]);
+    }
+  }
+
+  const signals = [
+    { pi: 0, pct: 0.00, spd:  0.044, chr: '*' },
+    { pi: 0, pct: 0.55, spd: -0.040, chr: 'o' },
+    { pi: 1, pct: 0.15, spd:  0.041, chr: '*' },
+    { pi: 1, pct: 0.65, spd: -0.038, chr: 'o' },
+    { pi: 2, pct: 0.25, spd:  0.030, chr: '*' },
+    { pi: 2, pct: 0.72, spd: -0.028, chr: 'o' },
+  ];
+
+  const makeGrid = () => Array.from({ length: H }, () => Array(W).fill(' '));
+
+  function put(g, r, c, s) {
+    for (let i = 0; i < s.length; i++)
+      if (r >= 0 && r < H && c + i >= 0 && c + i < W) g[r][c + i] = s[i];
+  }
+
+  const render = g => g.map(r => r.join('')).join('\n');
+
+  function drawTower(g, tr, tc) {
+    put(g, tr,     tc + 2, '*');
+    put(g, tr + 1, tc + 1, '\\|/');
+    put(g, tr + 2, tc + 2, '|');
+    put(g, tr + 3, tc + 1, '/|\\');
+    put(g, tr + 4, tc,     '/   \\');
+  }
+
+  let tick = 0;
+
+  function step() {
+    tick++;
+
+    for (const s of signals) {
+      s.pct += s.spd;
+      if (s.pct >= 1.0) s.pct -= 1.0;
+      if (s.pct <  0.0) s.pct += 1.0;
+    }
+
+    const g = makeGrid();
+    for (const [r, c, ch] of GRASS) put(g, r, c, ch);
+    for (const t of TOWERS) drawTower(g, t.tr, t.tc);
+    for (const s of signals) {
+      const pts = PATHS[s.pi].pts;
+      const [r, c] = pts[Math.min(Math.floor(s.pct * pts.length), pts.length - 1)];
+      put(g, r, c, s.chr);
+    }
+    el.textContent = render(g);
+  }
+
+  const ig = makeGrid();
+  for (const [r, c, ch] of GRASS) put(ig, r, c, ch);
+  for (const t of TOWERS) drawTower(ig, t.tr, t.tc);
+  el.textContent = render(ig);
+
+  const tid = setInterval(step, 130);
+  window.addEventListener('pagehide', () => clearInterval(tid), { once: true });
+}
+// ── Mail animation (Shepherd page) ────────
+function initMailAnimation() {
+  const el = document.querySelector('.shepherd-mail');
+  if (!el) return;
+
+  const W = 50, H = 15;
+  const EX = 17, EY = 9;   // envelope top-left
+  const LX = EX + 2;        // letter left col
+
+  const LETTER = [
+    '.--------.',
+    '| ~~~~~~ |',
+    '| ~~~~~~ |',
+    '| ~~~~~~ |',
+    "'--------'",
+  ];
+
+  const grid = () => Array.from({ length: H }, () => Array(W).fill(' '));
+
+  function put(g, r, c, s) {
+    for (let i = 0; i < s.length; i++)
+      if (r >= 0 && r < H && c + i >= 0 && c + i < W) g[r][c + i] = s[i];
+  }
+
+  const render = g => g.map(r => r.join('')).join('\n');
+
+  function drawFlap(g, ex, ey) {
+    put(g, ey - 2, ex + 3, '   /\\   ');
+    put(g, ey - 1, ex + 3, '  /  \\  ');
+  }
+
+  function drawBody(g, ex, ey) {
+    put(g, ey,     ex, '.------------.');
+    put(g, ey + 1, ex, '|            |');
+    put(g, ey + 2, ex, '|            |');
+    put(g, ey + 3, ex, '|            |');
+    put(g, ey + 4, ex, "'------------'");
+  }
+
+  function drawClosing(g, ex, ey) {
+    put(g, ey - 1, ex, '.\\__________/.');
+    drawBody(g, ex, ey);
+  }
+
+  function drawSealed(g, ex, ey) {
+    put(g, ey,     ex, '.------------.');
+    put(g, ey + 1, ex, '|\\ -------- /|');
+    put(g, ey + 2, ex, "| '--------' |");
+    put(g, ey + 3, ex, '|            |');
+    put(g, ey + 4, ex, "'------------'");
+  }
+
+  function drawLetter(g, ly) {
+    LETTER.forEach((row, i) => put(g, ly + i, LX, row));
+  }
+
+  const seq = [];
+
+  // Phase 1: letter descends toward open envelope
+  for (let ly = -3; ly < EY - LETTER.length; ly++) {
+    const g = grid();
+    drawFlap(g, EX, EY);
+    drawBody(g, EX, EY);
+    drawLetter(g, ly);
+    seq.push(render(g));
+  }
+
+  // Phase 2: letter enters envelope (flap behind, body in front)
+  for (let step = 0; step < 6; step++) {
+    const g = grid();
+    const ly = EY - LETTER.length + step;
+    drawFlap(g, EX, EY);
+    drawLetter(g, ly);
+    drawBody(g, EX, EY);
+    seq.push(render(g));
+  }
+
+  // Phase 3: flap closes
+  { const g = grid(); drawClosing(g, EX, EY); seq.push(render(g)); seq.push(render(g)); }
+
+  // Phase 4: sealed — hold
+  { const g = grid(); drawSealed(g, EX, EY); seq.push(render(g)); seq.push(render(g)); seq.push(render(g)); }
+
+  // Phase 5: fly right with motion trail
+  for (let dx = 1; dx <= 11; dx++) {
+    const g = grid();
+    put(g, EY + 2, EX, '-->'.repeat(20).substring(0, dx * 3));
+    drawSealed(g, EX + dx * 3, EY);
+    seq.push(render(g));
+  }
+
+  // Phase 6: blank pause
+  for (let i = 0; i < 4; i++) seq.push(render(grid()));
+
+  let idx = 0;
+  const tid = setInterval(() => { el.textContent = seq[idx]; idx = (idx + 1) % seq.length; }, 120);
+  window.addEventListener('pagehide', () => clearInterval(tid), { once: true });
+}
+
+// ── Homelab server rack animation ─────────
+function initHomelabAnimation() {
+  const el = document.querySelector('.homelab-art');
+  if (!el) return;
+
+  // Large server rack with monitor on top.
+  // Cables run DOWN from the rack bottom and along the floor.
+
+  const W = 65, H = 33;
+  const RC = 4, RW = 22;  // rack/monitor left col, width (. + 20 content + .)
+
+  // Monitor screen interior: rows 1-4, cols RC+1 to RC+20
+  const SCR_R = 1, SCR_C = RC + 1, SCR_W = 20, SCR_H = 4;
+  const WELCOME_TEXT = 'Welcome!';
+  const WELCOME = [
+    '                    ',
+    '      Welcome!      ',  // 6+8+6 = 20
+    '                    ',
+    '                    ',
+  ];
+
+  const MCHARS = '01!@#$%^ABCDabcd/\\|=+-:;1100';
+  const mc = () => MCHARS[Math.floor(Math.random() * MCHARS.length)];
+
+  // LED state: 5 rows x 6 LEDs
+  let leds = Array.from({length: 5}, () =>
+    Array.from({length: 6}, () => Math.random() > 0.5)
+  );
+
+  let phase = -1, phaseTick = 0, typedLen = 0;
+  let rainHeads = new Array(SCR_W).fill(-1);
+  let matrixFill = Array.from({length: SCR_H}, () => new Array(SCR_W).fill(' '));
+
+  // Cable drop columns (within the rack footprint)
+  const CABLE_COLS = [RC + 3, RC + 7, RC + 13, RC + 18]; // cols 7,11,17,22
+
+  const makeGrid = () => Array.from({length: H}, () => Array(W).fill(' '));
+
+  function put(g, r, c, s) {
+    for (let i = 0; i < s.length; i++)
+      if (r >= 0 && r < H && c + i >= 0 && c + i < W) g[r][c + i] = s[i];
+  }
+
+  const render = g => g.map(r => r.join('')).join('\n');
+
+  function drawStructure(g) {
+    // Monitor (rows 0-6)
+    put(g, 0, RC, '.--------------------.'); // . + 20- + . = 22
+    put(g, 1, RC, '|                    |');
+    put(g, 2, RC, '|                    |');
+    put(g, 3, RC, '|                    |');
+    put(g, 4, RC, '|                    |');
+    put(g, 5, RC, "'--------------------'");
+    put(g, 6, RC + 9, '| |'); // stand
+
+    // Rack (rows 7-27)
+    put(g,  7, RC, '.--------------------.'); // rack top
+    for (const r of [9, 11, 13, 15, 17, 19, 21, 23, 25]) put(g, r, RC, '|--------------------|');
+    for (const r of [10, 14, 18, 22, 26]) put(g, r, RC, '| [======]  [======] |');
+    put(g, 27, RC, "'===================='"); // rack base
+    // Left/right walls for LED rows
+    for (const r of [8, 12, 16, 20, 24]) { put(g, r, RC, '|'); put(g, r, RC + 21, '|'); }
+
+    // Cable drops from rack bottom down to floor
+    for (const c of CABLE_COLS) {
+      put(g, 28, c, '|');
+      put(g, 29, c, '|');
+    }
+
+    // Floor cable tray — goes edge to edge with T-junctions at cable cols
+    const floor1 = Array(W).fill('=');
+    floor1[0] = '<';
+    floor1[W - 1] = '>';
+    for (const c of CABLE_COLS) floor1[c] = '+';
+    put(g, 30, 0, floor1.join(''));
+
+    // Second floor cable (fiber / thin cable)
+    const floor2 = Array(W).fill('~');
+    floor2[0] = '<';
+    floor2[W - 1] = '>';
+    put(g, 31, 0, floor2.join(''));
+  }
+
+  function drawLeds(g) {
+    const ledRows = [8, 12, 16, 20, 24];
+    const ledCols = [RC+2, RC+5, RC+8, RC+11, RC+14, RC+17];
+    for (let r = 0; r < 5; r++)
+      for (let c = 0; c < 6; c++)
+        put(g, ledRows[r], ledCols[c], leds[r][c] ? '*' : 'o');
+  }
+
+  function drawScreen(g) {
+    for (let sr = 0; sr < SCR_H; sr++) {
+      let row;
+      if (phase === -1) {
+        row = new Array(SCR_W).fill(' ');
+        if (sr === 1) {
+          const typed = '      ' + WELCOME_TEXT.slice(0, typedLen);
+          for (let i = 0; i < SCR_W; i++) row[i] = typed[i] || ' ';
+        }
+      } else {
+        row = WELCOME[sr].split('');
+        if (phase >= 1) {
+          for (let sc = 0; sc < SCR_W; sc++) {
+            const h = rainHeads[sc];
+            if (h < 0) continue;
+            if (sr < h) row[sc] = matrixFill[sr][sc];
+            else if (sr === h && h < SCR_H) row[sc] = mc();
+          }
+        }
+      }
+      put(g, SCR_R + sr, SCR_C, row.join(''));
+    }
+  }
+
+  let tick = 0;
+
+  function step() {
+    tick++; phaseTick++;
+
+    for (let r = 0; r < 5; r++)
+      for (let c = 0; c < 6; c++)
+        if (Math.random() < 0.04) leds[r][c] = !leds[r][c];
+
+    if (phase === -1) {
+      if (phaseTick % 4 === 0 && typedLen < WELCOME_TEXT.length) typedLen++;
+      if (typedLen >= WELCOME_TEXT.length && phaseTick > 24) { phase = 0; phaseTick = 0; }
+
+    } else if (phase === 0) {
+      if (phaseTick > 38) { phase = 1; phaseTick = 0; }
+
+    } else if (phase === 1) {
+      for (let sc = 0; sc < SCR_W; sc++)
+        if (rainHeads[sc] === -1 && phaseTick >= sc * 2) rainHeads[sc] = 0;
+      if (phaseTick % 5 === 0) {
+        for (let sc = 0; sc < SCR_W; sc++) {
+          if (rainHeads[sc] >= 0 && rainHeads[sc] < SCR_H) {
+            matrixFill[rainHeads[sc]][sc] = mc();
+            rainHeads[sc]++;
+          }
+        }
+      }
+      if (rainHeads.every(h => h >= SCR_H)) { phase = 2; phaseTick = 0; }
+
+    } else if (phase === 2) {
+      if (phaseTick % 2 === 0)
+        matrixFill[Math.floor(Math.random()*SCR_H)][Math.floor(Math.random()*SCR_W)] = mc();
+      if (phaseTick > 25) { phase = 3; phaseTick = 0; }
+
+    } else if (phase === 3) {
+      // Scroll matrix rows off the bottom — one row every 2 ticks
+      if (phaseTick % 2 === 0 && phaseTick <= SCR_H * 2) {
+        matrixFill.pop();
+        matrixFill.unshift(new Array(SCR_W).fill(' '));
+      }
+      // Brief blank pause then restart typewriter
+      if (phaseTick > SCR_H * 2 + 10) {
+        phase = -1; phaseTick = 0; typedLen = 0;
+        rainHeads = new Array(SCR_W).fill(-1);
+        matrixFill = Array.from({length: SCR_H}, () => new Array(SCR_W).fill(' '));
+      }
+    }
+
+    const g = makeGrid();
+    drawStructure(g);
+    drawLeds(g);
+    drawScreen(g);
+    el.textContent = render(g);
+  }
+
+  const ig = makeGrid();
+  drawStructure(ig);
+  drawLeds(ig);
+  el.textContent = render(ig);
+
+  const tid = setInterval(step, 130);
+  window.addEventListener('pagehide', () => clearInterval(tid), { once: true });
+}
 // ── Init ─────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   // Only init Lenis if the library is loaded
@@ -534,6 +906,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initDrone();
   initSky();
   initHeroAnimation();
+  initNodeAnimation();
+  initMailAnimation();
+  initHomelabAnimation();
   initPageHeader();
   initScrollReveal();
   initStats();

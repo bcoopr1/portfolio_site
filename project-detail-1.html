@@ -49,16 +49,21 @@
         <h1 class="project-detail__title">Shepherd</h1>
         <p class="project-detail__meta">2025 · Lead Developer · n8n · RAG · PostgreSQL · Gemini</p>
 
-        <div class="project-detail__desc">
-          <p>
-            Shepherd AI is a self-hosted email workflow agent I built for real estate teams to manage high-volume inboxes, organize client communication, and quickly retrieve important documents. The system connected to Microsoft 365 through OAuth, classified incoming emails, and stored key files in a local PostgreSQL vector database. I used n8n as the workflow automation layer to route emails, trigger classification steps, manage document ingestion, and support a RAG chatbot that allowed users to search their inbox and related files through natural language. 
-          </p>
-          <p>
-            The goal of Shepherd AI was to help the end user query their email through a secured chatbot and retrieve important documents faster, especially during closing and filing processes where speed and organization matter. Instead of manually searching through long email threads, attachments, and client folders, the user could ask the chatbot for specific documents or context and receive relevant results pulled from the indexed database.
-          </p>
-          <p>
-            Shepherd AI ran successfully for eight months before I shut it down due to energy usage and time constraints. Even though the service is no longer active, the project strengthened my understanding of AI workflow automation, secure self-hosting, and practical document retrieval systems for business use cases.
-          </p>
+        <div class="shepherd-desc-row">
+          <div class="project-detail__desc">
+            <p>
+              Shepherd AI is a self-hosted email workflow agent I built for real estate teams to manage high-volume inboxes, organize client communication, and quickly retrieve important documents. The system connected to Microsoft 365 through OAuth, classified incoming emails, and stored key files in a local PostgreSQL vector database. I used n8n as the workflow automation layer to route emails, trigger classification steps, manage document ingestion, and support a RAG chatbot that allowed users to search their inbox and related files through natural language.
+            </p>
+            <p>
+              The goal of Shepherd AI was to help the end user query their email through a secured chatbot and retrieve important documents faster, especially during closing and filing processes where speed and organization matter. Instead of manually searching through long email threads, attachments, and client folders, the user could ask the chatbot for specific documents or context and receive relevant results pulled from the indexed database.
+            </p>
+            <p>
+              Shepherd AI ran successfully for eight months before I shut it down due to energy usage and time constraints. Even though the service is no longer active, the project strengthened my understanding of AI workflow automation, secure self-hosting, and practical document retrieval systems for business use cases.
+            </p>
+          </div>
+          <div class="shepherd-mail-wrap">
+            <pre class="shepherd-mail" aria-hidden="true"></pre>
+          </div>
         </div>
 
         <div class="project-detail__facts">
@@ -90,9 +95,6 @@
           <img src="images/shepherd-workflow-1.png" alt="Shepherd AI email classification workflow in n8n" class="project-detail__image" />
           <p class="project-detail__image-label">Workflow - Document Ingestion &amp; Vector Storage</p>
           <img src="images/shepherd-workflow-2.png" alt="Shepherd AI document ingestion and embedding workflow in n8n" class="project-detail__image" />
-        </div>
-
-        <div class="project-detail__links">
         </div>
 
         <nav class="project-nav">
