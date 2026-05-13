@@ -1104,6 +1104,73 @@ code {
   margin-bottom: 5rem;
 }
 
+/* Sub-project breakdown cards */
+.subproject-list {
+  margin-bottom: 4rem;
+}
+
+.subproject {
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.subproject:first-child {
+  border-top: 1px solid var(--border);
+}
+
+.subproject__header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.subproject__index {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  min-width: 1.8rem;
+}
+
+.subproject__name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.subproject__stack {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.9rem;
+}
+
+.subproject__desc {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--text);
+  max-width: var(--max-prose);
+  margin-bottom: 0.75rem;
+}
+
+.subproject__link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: color 0.15s;
+}
+
+.subproject__link:hover {
+  color: var(--text);
+}
+
 .shepherd-desc-row,
 .project-desc-aside {
   display: grid;

@@ -47,18 +47,88 @@
         <a href="projects.html" class="project-detail__back">← All projects</a>
 
         <h1 class="project-detail__title">Class Projects</h1>
-        <p class="project-detail__meta">2026 · Full-Stack · LangChain · Django · n8n · SQL</p>
+        <p class="project-detail__meta">2026 · Baylor University · MIS Program · AI Implementation</p>
 
         <div class="project-detail__desc">
           <p>
-            During my Management Information Systems degree at Baylor, two courses in particular pushed me from theory into genuine applied work. Professor Bhojwani's SQL and AI Implementation class gave me a structured introduction to database design and query optimization alongside hands-on exposure to generative AI tooling. The projects in that class were the first time I built something real with LLMs rather than just reading about them.
+            These are the six projects I built during Professor Bhojwani's SQL and AI Implementation course at Baylor. The class ran the full stack from relational databases up through LLM-powered agents, and each project pushed a different part of that range. Some were straightforward exercises in learning a tool, others turned into real prototypes I kept building on after the semester ended.
           </p>
-          <p>
-            The centerpiece project was a LangChain-powered research assistant built on top of a Django backend, designed to answer domain-specific questions by retrieving context from a structured SQL database and passing it to an LLM for synthesis. The system used a retrieval-augmented approach where user queries were parsed, matched against indexed records, and returned as grounded natural-language responses rather than hallucinated outputs. A secondary project used n8n to automate a multi-step data ingestion and classification workflow, connecting an external API, a local database, and a notification layer without writing custom integration code for each step.
-          </p>
-          <p>
-            These projects collectively shifted how I think about building with AI - less as a magic layer you drop in, and more as a structured component in a larger data pipeline. They also gave me a working vocabulary for the tools I now reach for on real client work, including Shepherd and Argus.
-          </p>
+        </div>
+
+        <div class="subproject-list">
+
+          <div class="subproject">
+            <div class="subproject__header">
+              <span class="subproject__index">01</span>
+              <span class="subproject__name">Chatbot Project</span>
+            </div>
+            <p class="subproject__stack">Python · Gemini API · REST</p>
+            <p class="subproject__desc">
+              The first project in the course was a straight-line chatbot built on top of the Gemini API. The goal was to understand the request/response loop, understand system prompts and what it actually costs in tokens to keep a multi-turn session alive. Nothing complex, but it was the first time I wrote something that talked back and it immediately made me want to push further.
+            </p>
+            <a href="https://github.com/bcoopr1/aiclass" target="_blank" rel="noopener" class="subproject__link">View on GitHub →</a>
+          </div>
+
+          <div class="subproject">
+            <div class="subproject__header">
+              <span class="subproject__index">02</span>
+              <span class="subproject__name">n8n Agent Workflow</span>
+            </div>
+            <p class="subproject__stack">n8n · Webhooks · REST APIs · PostgreSQL</p>
+            <p class="subproject__desc">
+              This project was after my time creating Shepherd but it continued to reinforce the same skills used in Shepherd. I used nodes to interact with POST/GET calls to be able to scheudle events on a google calendar as a POC for a simple automted workflow. The workflow then use googles API to be able to send a confirmation email to the recepiant. The work taught me how to think about data pipelines visually and how to break a multi-step process into discrete nodes that can each be tested and replaced independently.
+            </p>
+            <a href="https://github.com/bcoopr1/aiclass" target="_blank" rel="noopener" class="subproject__link">View on GitHub →</a>
+          </div>
+
+          <div class="subproject">
+            <div class="subproject__header">
+              <span class="subproject__index">03</span>
+              <span class="subproject__name">LangChain Agent</span>
+            </div>
+            <p class="subproject__stack">Python · LangChain · Gmail API · Google Calendar API</p>
+            <p class="subproject__desc">
+              For this one I built a LangChain agent for a fictional business. The agent could read incoming data, pull out scheduling requests, and add appointments directly to Google Calendar without any manual input. It would look for availability and correct pricing when the client would give its issue it needed. I set up three tools for the agent, one for reading email, one for checking prices for the service and one for writing calendar events, and let LangChain handle the reasoning loop between them. The hardest part was getting the agent to reliably extract date and time from loosely worded messages. I ended up writing a custom prompt that gave it a structured format to fill out before committing anything to the calendar.
+            </p>
+            <a href="https://github.com/bcoopr1/aiclass" target="_blank" rel="noopener" class="subproject__link">View on GitHub →</a>
+          </div>
+
+          <div class="subproject">
+            <div class="subproject__header">
+              <span class="subproject__index">04</span>
+              <span class="subproject__name">Google AI Studio Media Project</span>
+            </div>
+            <p class="subproject__stack">Google AI Studio · Gemini · Multimodal · Prompt Engineering</p>
+            <p class="subproject__desc">
+              The assignment was open-ended: use Google AI Studio to create something with a media component. I used Gemini's multimodal capabilities to design a fictional powered exosuit. The workflow involved generating concept descriptions, feeding those into image prompts, and then using the model to write fictional spec sheets and technical manuals for the suit as if it were a real product. It was less of a software project and more of an exploration of how far you can push a generative model as a creative design tool. The output was surprisingly detailed and it made me think differently about where AI fits in product ideation. We then presented these projects to a group of marketers for the chance to win bonus points.
+            </p>
+            <a href="https://github.com/bcoopr1/aiclass" target="_blank" rel="noopener" class="subproject__link">View on GitHub →</a>
+          </div>
+
+          <div class="subproject">
+            <div class="subproject__header">
+              <span class="subproject__index">05</span>
+              <span class="subproject__name">Machine Learning Project</span>
+            </div>
+            <p class="subproject__stack">Python · scikit-learn · pandas · matplotlib</p>
+            <p class="subproject__desc">
+              This project was focused on learning the scikit-learn workflow from end to end: loading a dataset, cleaning it, splitting into train and test sets, fitting a model, and evaluating it. I worked through both classification and regression examples to see how the same pipeline applies to different problem types. The bigger lesson was understanding where a model actually fails, looking at the confusion matrix and residual plots rather than just the headline accuracy number. It demystified a lot of ML terminology I had heard thrown around and gave me a concrete foundation before moving on to neural network material in later courses.
+            </p>
+            <a href="https://github.com/bcoopr1/aiclass" target="_blank" rel="noopener" class="subproject__link">View on GitHub →</a>
+          </div>
+
+          <div class="subproject">
+            <div class="subproject__header">
+              <span class="subproject__index">06</span>
+              <span class="subproject__name">Campus SkillSwap</span>
+            </div>
+            <p class="subproject__stack">Python · Django · SQLite · HTML/CSS</p>
+            <p class="subproject__desc">
+              SkillSwap was the capstone of the semester. I built a web application where Baylor students could post skills they could teach and browse skills they wanted to learn, then connect with each other directly through the platform. The backend used Django's ORM for all the database work and Django's built-in auth for user accounts. The front end was straightforward HTML and CSS. The project forced me to think about data modeling seriously: how you structure a skill, a user profile, a match request, and a message thread in a relational schema without ending up with a mess of foreign keys pointing in every direction.
+            </p>
+            <a href="https://github.com/bcoopr1/aiclass" target="_blank" rel="noopener" class="subproject__link">View on GitHub →</a>
+          </div>
+
         </div>
 
         <div class="project-detail__facts">
@@ -67,8 +137,8 @@
             <span class="project-detail__fact-value">Baylor University - MIS Program</span>
           </div>
           <div class="project-detail__fact">
-            <span class="project-detail__fact-label">Role</span>
-            <span class="project-detail__fact-value">Student</span>
+            <span class="project-detail__fact-label">Course</span>
+            <span class="project-detail__fact-value">SQL and AI Implementation - Prof. Bhojwani</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Timeline</span>
@@ -76,7 +146,7 @@
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Stack</span>
-            <span class="project-detail__fact-value">Python, Django, LangChain, n8n, PostgreSQL, OpenAI API, REST APIs, SQL</span>
+            <span class="project-detail__fact-value">Python, Django, LangChain, n8n, scikit-learn, PostgreSQL, Google Gemini, Gmail API, Google Calendar API, REST APIs, SQL</span>
           </div>
           <div class="project-detail__fact">
             <span class="project-detail__fact-label">Outcome</span>
@@ -84,8 +154,9 @@
           </div>
         </div>
 
-        <div class="project-detail__links">
-          <a href="https://github.com/bcoopr1/aiclass" target="_blank" rel="noopener" class="link-arrow">View source →</a>
+        <div class="project-detail__links" style="flex-direction:column; align-items:flex-start; gap:0.75rem;">
+          <p style="font-family:'Lora',Georgia,serif; font-size:0.95rem; color:var(--text);">All project files are listed here in my github :)</p>
+          <a href="https://github.com/bcoopr1/aiclass" target="_blank" rel="noopener" class="link-arrow">View all source on GitHub →</a>
         </div>
 
         <nav class="project-nav">
