@@ -724,6 +724,224 @@ function initMailAnimation() {
   window.addEventListener('pagehide', () => clearInterval(tid), { once: true });
 }
 
+// ── Chatbot robot animation ────────────────
+function initChatbotRobot() {
+  const el = document.querySelector('.chatbot-robot');
+  if (!el) return;
+
+  const msgs = ['Hello! :)', 'Beep boop!', 'How can I help?', 'Processing...', 'Ready!'];
+  let mi = 0, eyeOpen = true, tick = 0;
+
+  function draw() {
+    const eyes = eyeOpen ? 'o     o' : '-     -';
+    const msg  = msgs[mi];
+    const bw   = Math.max(msg.length, 13);
+    const pad  = ' '.repeat(bw - msg.length);
+    const dash = '-'.repeat(bw + 2);
+    el.textContent = [
+      `  .${dash}.`,
+      `  | ${msg}${pad} |`,
+      `  '${dash}'`,
+      `            /`,
+      `     .------'`,
+      `     | ${eyes} |`,
+      `     |   ---   |`,
+      `     '---------'`,
+      `    .-----------.`,
+      `    | [=======] |`,
+      `    '-----------'`,
+      `        |     |`,
+      `       [_]   [_]`,
+    ].join('\n');
+  }
+
+  draw();
+  setInterval(() => {
+    tick++;
+    if (tick % 50 === 0) {
+      mi = (mi + 1) % msgs.length;
+    }
+    if (tick % 35 === 0) {
+      eyeOpen = false;
+      draw();
+      setTimeout(() => { eyeOpen = true; draw(); }, 200);
+      return;
+    }
+    draw();
+  }, 100);
+}
+
+// ── SkillSwap campus chat animation ───────
+function initSkillSwapArt() {
+  const el = document.querySelector('.skillswap-art');
+  if (!el) return;
+
+  const offersA = ['teach Python', 'teach guitar', 'teach design'];
+  const offersB = ['teach Spanish', 'teach chess', 'teach drawing'];
+  let phase = 0, phaseTick = 0, idx = 0;
+
+  const W = 52, H = 7;
+  const MAX_LEN = 19; // longest: "I can teach Spanish"
+  const PA = 4;       // person A head col
+  const PB = 44;      // person B head col
+  const BA = 0;       // bubble A start col
+  const BB = 29;      // bubble B start col
+
+  function drawBubble(g, text, startCol, tailCol) {
+    const padded = (text + ' '.repeat(MAX_LEN)).slice(0, MAX_LEN);
+    g[0][startCol] = '.';
+    for (let i = 1; i <= MAX_LEN + 2; i++) g[0][startCol + i] = '-';
+    g[0][startCol + MAX_LEN + 3] = '.';
+    g[1][startCol] = '|'; g[1][startCol + 1] = ' ';
+    for (let i = 0; i < MAX_LEN; i++) g[1][startCol + 2 + i] = padded[i];
+    g[1][startCol + MAX_LEN + 2] = ' '; g[1][startCol + MAX_LEN + 3] = '|';
+    g[2][startCol] = "'";
+    for (let i = 1; i <= MAX_LEN + 2; i++) g[2][startCol + i] = '-';
+    g[2][startCol + MAX_LEN + 3] = "'";
+    g[3][tailCol] = '\\';
+  }
+
+  function draw() {
+    const g = Array.from({length: H}, () => new Array(W).fill(' '));
+
+    g[4][PA] = 'O';
+    g[5][PA-1] = '/'; g[5][PA] = '|'; g[5][PA+1] = '\\';
+    g[6][PA-1] = '/'; g[6][PA+1] = '\\';
+
+    g[4][PB] = 'O';
+    g[5][PB-1] = '/'; g[5][PB] = '|'; g[5][PB+1] = '\\';
+    g[6][PB-1] = '/'; g[6][PB+1] = '\\';
+
+    const showA = phase === 1 || phase === 3 || phase === 4;
+    const showB = phase === 2 || phase === 3 || phase === 4;
+
+    if (showA) drawBubble(g, 'I can ' + offersA[idx], BA, PA);
+    if (showB) drawBubble(g, 'I can ' + offersB[idx], BB, PB);
+
+    el.textContent = g.map(r => r.join('')).join('\n');
+  }
+
+  draw();
+  setInterval(() => {
+    phaseTick++;
+    const durations = [18, 22, 22, 22, 12, 20];
+    if (phaseTick >= durations[phase]) {
+      phaseTick = 0;
+      phase = (phase + 1) % durations.length;
+      if (phase === 0) idx = (idx + 1) % offersA.length;
+    }
+    draw();
+  }, 100);
+}
+
+// ── ML pattern recognition animation ─────
+function initMLArt() {
+  const el = document.querySelector('.ml-art');
+  if (!el) return;
+
+  const W = 34, H = 13;
+  let tick = 0;
+
+  // class A (o) upper-left cluster, class B (x) lower-right
+  const ptA = [[2,1],[4,2],[3,3],[6,1],[5,3],[7,2],[4,4],[8,2],[6,4],[3,5],[9,1],[5,5],[7,4],[10,2],[8,5]];
+  const ptB = [[22,7],[24,8],[23,9],[25,7],[26,9],[21,8],[24,10],[27,8],[22,10],[25,10],[26,7],[28,9],[27,10],[23,7],[29,8]];
+
+  function draw() {
+    const TOTAL = 160;
+    const t = tick % TOTAL;
+    const g = Array.from({length: H}, () => new Array(W).fill('.'));
+
+    // Phase 1: scatter points appear (t 0-59)
+    const nA = Math.min(ptA.length, Math.floor(t / 2));
+    const nB = Math.min(ptB.length, Math.floor(Math.max(0, t - 10) / 2));
+    for (let i = 0; i < nA; i++) { const [c, r] = ptA[i]; if (r < H && c < W) g[r][c] = 'o'; }
+    for (let i = 0; i < nB; i++) { const [c, r] = ptB[i]; if (r < H && c < W) g[r][c] = 'x'; }
+
+    // Phase 2: decision boundary sweeps in (t 60-85)
+    if (t > 55) {
+      const pct = Math.min(1, (t - 55) / 22);
+      const maxR = Math.floor(H * pct);
+      for (let r = 0; r < maxR; r++) {
+        const c = Math.round(13 + r * 0.55);
+        if (c >= 0 && c < W && g[r][c] === '.') g[r][c] = '/';
+      }
+    }
+
+    const lines = g.map(row => row.join(' ')).join('\n');
+
+    // Phase 3: accuracy counter climbs (t 85+)
+    let footer;
+    if (t < 55) {
+      footer = '\n  training...';
+    } else if (t < 90) {
+      footer = '\n  fitting boundary...';
+    } else {
+      const acc = Math.min(94, Math.floor((t - 90) * 2.8));
+      footer = `\n  accuracy: ${acc}%    o class-A   x class-B`;
+    }
+
+    el.textContent = lines + footer;
+    tick++;
+  }
+
+  draw();
+  setInterval(draw, 90);
+}
+
+// ── LangChain agent packet animation ──────
+function initLangchainArt() {
+  const el = document.querySelector('.langchain-art');
+  if (!el) return;
+
+  const W = 50, H = 7;
+  let tick = 0;
+
+  const BOXES = [
+    { c: 1,  r: 1, l1: ' EMAIL  ', l2: '  TOOL  ' },
+    { c: 20, r: 1, l1: ' AGENT  ', l2: '  CORE  ' },
+    { c: 39, r: 1, l1: ' CAL.   ', l2: '  TOOL  ' },
+  ];
+  const ARROWS = [
+    { r: 3, c1: 11, c2: 20 },
+    { r: 3, c1: 30, c2: 39 },
+  ];
+  const CYCLE = 18;
+
+  function draw() {
+    const g = Array.from({length: H}, () => new Array(W).fill(' '));
+
+    for (const b of BOXES) {
+      const { c, r, l1, l2 } = b;
+      const w = l1.length;
+      g[r][c] = '.'; for (let i = 1; i <= w; i++) g[r][c+i] = '-'; g[r][c+w+1] = '.';
+      g[r+1][c] = '|'; for (let i = 0; i < w; i++) g[r+1][c+1+i] = l1[i]; g[r+1][c+w+1] = '|';
+      g[r+2][c] = '|'; for (let i = 0; i < w; i++) g[r+2][c+1+i] = l2[i]; g[r+2][c+w+1] = '|';
+      g[r+3][c] = "'"; for (let i = 1; i <= w; i++) g[r+3][c+i] = '-'; g[r+3][c+w+1] = "'";
+    }
+
+    for (let ai = 0; ai < ARROWS.length; ai++) {
+      const { r, c1, c2 } = ARROWS[ai];
+      const len = c2 - c1;
+      for (let i = 0; i < len; i++) g[r][c1+i] = '-';
+      g[r][c2-1] = '>';
+      const phase = Math.floor((tick + ai * 9) / 2) % CYCLE;
+      if (phase < len) g[r][c1 + phase] = 'o';
+    }
+
+    const labels = [' email tool', '  agent core', '  cal. tool'];
+    const lCols  = [1, 20, 39];
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < labels[i].length; j++) g[5][lCols[i]+j] = labels[i][j];
+    }
+
+    el.textContent = g.map(r => r.join('')).join('\n');
+    tick++;
+  }
+
+  draw();
+  setInterval(draw, 80);
+}
+
 // ── Homelab server rack animation ─────────
 function initHomelabAnimation() {
   const el = document.querySelector('.homelab-art');
@@ -917,6 +1135,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initNodeAnimation();
   initMailAnimation();
   initHomelabAnimation();
+  initChatbotRobot();
+  initLangchainArt();
+  initMLArt();
+  initSkillSwapArt();
   initPageHeader();
   initScrollReveal();
   initStats();

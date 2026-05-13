@@ -1109,6 +1109,52 @@ code {
   margin-bottom: 4rem;
 }
 
+.subproject__side {
+  display: grid;
+  grid-template-columns: minmax(0, var(--max-prose)) 1fr;
+  gap: 0 2rem;
+  align-items: start;
+}
+
+.chatbot-robot-wrap,
+.n8n-img-wrap,
+.langchain-art-wrap {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+
+.chatbot-robot,
+.langchain-art,
+.ml-art,
+.skillswap-art {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--text-muted);
+  opacity: 0.6;
+  white-space: pre;
+}
+
+.n8n-workflow-img {
+  max-width: 270px;
+  border: 1px solid var(--border);
+  display: block;
+  opacity: 0.85;
+}
+
+@media (max-width: 1000px) {
+  .chatbot-robot-wrap,
+  .n8n-img-wrap,
+  .langchain-art-wrap {
+    display: none;
+  }
+  .subproject__side {
+    grid-template-columns: 1fr;
+  }
+}
+
 .subproject {
   padding: 2rem 0;
   border-bottom: 1px solid var(--border);
