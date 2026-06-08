@@ -555,6 +555,44 @@ code {
   grid-template-columns: 3rem 1fr auto auto 3.5rem;
 }
 
+/* Folder (dropdown group) */
+.project-folder > .project-folder__header {
+  border-top: 1px solid var(--border);
+  user-select: none;
+}
+
+.project-folder__caret {
+  position: absolute;
+  right: 2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  transition: transform 0.25s ease;
+}
+
+.project-folder--open .project-folder__caret {
+  transform: rotate(90deg);
+}
+
+.project-folder__children {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.project-folder--open .project-folder__children {
+  max-height: 300px;
+}
+
+.project-folder__child {
+  padding-left: 5rem;
+  background: var(--hover-bg);
+}
+
+.project-folder__child .project-list__index {
+  opacity: 0.5;
+}
+
 /* =========================================
    HOME — SECTION HEADERS
    ========================================= */

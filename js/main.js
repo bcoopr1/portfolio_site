@@ -498,6 +498,14 @@ function initPageHeader() {
 }
 
 // ── Project detail entrance ───────────────
+function initProjectFolders() {
+  document.querySelectorAll('.project-folder__header').forEach(header => {
+    header.addEventListener('click', () => {
+      header.closest('.project-folder').classList.toggle('project-folder--open');
+    });
+  });
+}
+
 function initProjectDetail() {
   const title = document.querySelector('.project-detail__title');
   if (!title) return;
@@ -1140,6 +1148,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMLArt();
   initSkillSwapArt();
   initPageHeader();
+  initProjectFolders();
   initScrollReveal();
   initStats();
   initProjectDetail();
