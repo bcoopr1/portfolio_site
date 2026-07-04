@@ -750,66 +750,6 @@ code {
 }
 
 /* =========================================
-   SKILLS
-   ========================================= */
-.skills-section {
-  padding: 3rem 2rem;
-  border-bottom: 1px solid var(--border);
-  display: grid;
-  grid-template-columns: 12rem 1fr;
-  gap: 2rem;
-  align-items: start;
-}
-
-.skills-section__label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--text-muted);
-  padding-top: 0.2rem;
-}
-
-.skills-section__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.skills-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  border: 1px solid var(--border);
-  padding: 0.3rem 0.7rem;
-  color: var(--text);
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.skills-tag:hover {
-  background: var(--hover-bg);
-  border-color: var(--text-muted);
-}
-
-.skills-approach {
-  padding: 4rem 2rem;
-  max-width: var(--max-prose);
-}
-
-.skills-approach__label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--text-muted);
-  margin-bottom: 1.5rem;
-}
-
-.skills-approach p {
-  font-size: 1.1rem;
-  line-height: 1.78;
-}
-
-/* =========================================
    RESUME
    ========================================= */
 .resume-body {
@@ -1376,10 +1316,6 @@ code {
     display: none;
   }
 
-  .skills-section {
-    grid-template-columns: 1fr;
-  }
-
   .timeline__entry {
     grid-template-columns: 1fr;
     gap: 0.5rem;
@@ -1422,7 +1358,6 @@ code {
   .intro,
   .about-bio,
   .timeline,
-  .skills-section,
   .resume-body,
   .contact-body,
   .project-detail,

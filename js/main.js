@@ -372,8 +372,8 @@ function initHeroAnimation() {
   const asciiOpacity = getIsNight() ? 0.58 : 0.44;
 
   tl.to(inner, { y: '0%', duration: 1.1, delay: 0.1 })
-    .to(ascii, { opacity: asciiOpacity, duration: 0.6 }, '-=0.4')
-    .to(role, { opacity: 1, y: 0, duration: 0.7 }, '-=0.3');
+    .to(ascii, { opacity: asciiOpacity, duration: 0.6 }, '-=0.4');
+  if (role) tl.to(role, { opacity: 1, y: 0, duration: 0.7 }, '-=0.3');
 }
 
 // ── Scroll-triggered reveals ──────────────
@@ -418,23 +418,6 @@ function initScrollReveal() {
       stagger: 0.055,
       scrollTrigger: {
         trigger: rows[0].parentElement,
-        start: 'top 85%',
-        once: true,
-      },
-    });
-  }
-
-  // Skills tags stagger
-  const tags = gsap.utils.toArray('.skills-tag');
-  if (tags.length) {
-    gsap.from(tags, {
-      opacity: 0,
-      y: 10,
-      duration: 0.4,
-      ease: 'power2.out',
-      stagger: 0.03,
-      scrollTrigger: {
-        trigger: tags[0].closest('.skills-section'),
         start: 'top 85%',
         once: true,
       },
