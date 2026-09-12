@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hero Preview — The Valley</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;1,700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      background: #f5f2eb;
+      color: #1a1a1a;
+      font-family: 'Lora', Georgia, serif;
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+
+    /* ── Hero shell ─────────────────────────── */
+    .hv {
+      --ink: #1a1a1a;
+      --ink-muted: #6b6b6b;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 2rem;
+      cursor: default;
+    }
+    .hv-bg {
+      position: absolute; inset: 0;
+      transition: opacity 1.6s ease;
+      z-index: 0;
+    }
+
+    /* ── ASCII layers ───────────────────────── */
+    .hv-scene { position: absolute; inset: 0; z-index: 1; }
+    .layer {
+      position: absolute;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.55rem, 1vw, 0.85rem);
+      line-height: 1.25;
+      letter-spacing: 0;
+      color: var(--ink);
+      white-space: pre;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.4s ease, color 1.4s ease;
+      will-change: transform;
+    }
+
+    /* ── Headline ───────────────────────────── */
+    .hv-headline {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(3.5rem, 10vw, 11rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      overflow: hidden;
+      position: relative;
+      z-index: 3;
+      color: var(--ink);
+      transition: color 1.4s ease;
+      pointer-events: none;
+    }
+    .hv-headline-inner {
+      display: block;
+      transform: translateY(105%);
+      transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hv-headline-inner.in { transform: translateY(0); }
+
+    .hv-cue {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      color: var(--ink-muted);
+      opacity: 0;
+      transition: opacity 1s ease, color 1.4s ease;
+      animation: hv-bounce 2s ease-in-out infinite;
+      z-index: 3;
+    }
+    .hv-cue.in { opacity: 1; }
+    @keyframes hv-bounce {
+      0%, 100% { transform: translate(-50%, 0); }
+      50% { transform: translate(-50%, 8px); }
+    }
+
+    /* ── Sprites ────────────────────────────── */
+    .sprite {
+      position: absolute;
+      top: 0; left: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.7rem, 1.3vw, 1.05rem);
+      line-height: 1.25;
+      color: var(--ink);
+      opacity: 0;
+      white-space: pre;
+      user-select: none;
+      pointer-events: none;
+      z-index: 2;
+      transition: color 1.4s ease;
+    }
+    #fireflies {
+      position: absolute; inset: 0;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      pointer-events: none;
+    }
+    .firefly {
+      position: absolute;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--ink);
+      opacity: 0.6;
+      transition-property: left, top;
+      transition-timing-function: ease-in-out;
+      white-space: pre;
+    }
+    .star-head { font-size: 0.9rem; }
+    .star-trail { font-size: 0.7rem; opacity: 0.5; }
+    .smoke { font-size: 0.7rem; }
+
+    /* ── HUD (preview only) ─────────────────── */
+    .hud {
+      position: fixed;
+      bottom: 1.2rem;
+      right: 1.4rem;
+      z-index: 50;
+      display: flex;
+      gap: 0.15rem;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(245, 242, 235, 0.72);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(0,0,0,0.08);
+      padding: 0.3rem 0.4rem;
+    }
+    .hud button {
+      font-family: inherit;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: none;
+      border: none;
+      color: #6b6b6b;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+    }
+    .hud button:hover { color: #1a1a1a; }
+    .hud button.active { color: #1a1a1a; text-decoration: underline; text-underline-offset: 3px; }
+    .hud-label {
+      font-size: 0.6rem;
+      color: #9b9b9b;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      align-self: center;
+      padding-right: 0.4rem;
+      border-right: 1px solid rgba(0,0,0,0.1);
+      margin-right: 0.3rem;
+    }
+
+    /* ── Below the fold: what you're seeing ──── */
+    .notes {
+      max-width: 700px;
+      padding: 5rem 2rem 6rem;
+    }
+    .notes__label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #6b6b6b;
+      margin-bottom: 1.5rem;
+    }
+    .notes h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .notes ul { list-style: none; margin-bottom: 2.5rem; }
+    .notes li {
+      padding: 0.55rem 0;
+      border-bottom: 1px solid #e0ddd6;
+      font-size: 0.98rem;
+    }
+    .notes li strong {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 400;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #6b6b6b;
+      display: inline-block;
+      min-width: 10.5rem;
+    }
+    .notes p { color: #6b6b6b; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hv" id="hero">
+    <div class="hv-bg" id="bgA"></div>
+    <div class="hv-bg" id="bgB" style="opacity:0"></div>
+
+    <div class="hv-scene">
+      <pre class="layer" id="layer-sky"></pre>
+      <pre class="layer" id="layer-far"></pre>
+      <pre class="layer" id="layer-mid"></pre>
+      <pre class="layer" id="layer-near"></pre>
+      <pre class="layer" id="layer-fore"></pre>
+    </div>
+
+    <div id="fireflies" aria-hidden="true"></div>
+
+    <h1 class="hv-headline">
+      <span class="hv-headline-inner">Beau<br>Cooper</span>
+    </h1>
+    <div class="hv-cue" aria-hidden="true">↓</div>
+  </section>
+
+  <!-- HUD -->
+  <div class="hud" aria-label="Time of day override">
+    <span class="hud-label">Time</span>
+    <button data-phase="auto" class="active">Auto</button>
+    <button data-phase="dawn">Dawn</button>
+    <button data-phase="day">Day</button>
+    <button data-phase="golden">Golden</button>
+    <button data-phase="dusk">Dusk</button>
+    <button data-phase="night">Night</button>
+  </div>
+
+  <!-- NOTES -->
+  <section class="notes">
+    <p class="notes__label">Hero Preview — not linked from the site</p>
+    <h2>What you're looking at</h2>
+    <ul>
+      <li><strong>Five depth layers</strong> Sky, two far ridges, near ridge, valley floor — each fades with distance (aerial perspective).</li>
+      <li><strong>Move your mouse</strong> The layers parallax at different rates. Scroll does it too.</li>
+      <li><strong>Five times of day</strong> Dawn, day, golden hour, dusk, night — auto-synced to the visitor's clock. Try the switcher, bottom right.</li>
+      <li><strong>Sun &amp; moon</strong> Live in the sky layer itself, so the ridges truly occlude them — the golden-hour sun sits half-set behind the peaks.</li>
+      <li><strong>Procedural terrain</strong> The ridgelines are generated fresh on every visit. No two mountains are the same.</li>
+      <li><strong>The river</strong> Two counter-flowing currents, sun glints by day, a moonglade at night.</li>
+      <li><strong>The cabin</strong> Finds the flattest spot on the near ridge and settles there, chimney smoke and all.</li>
+      <li><strong>Night sky</strong> Twinkling starfield and the Big Dipper — upper right.</li>
+      <li><strong>Click the night sky</strong> Shooting star. Click during the day: a flock of birds in V formation.</li>
+      <li><strong>Wind</strong> Watch the valley grass — gusts ripple through it.</li>
+      <li><strong>Still flying</strong> The drone patrol and birds from the original stay, now with flocks.</li>
+      <li><strong>Good citizen</strong> Honors <code>prefers-reduced-motion</code>, pauses when the tab is hidden, no GSAP needed for any of it.</li>
+    </ul>
+    <p>If you like it, the engine drops into <code>js/main.js</code> and the switcher HUD goes away — the scene just follows the real clock.</p>
+  </section>
+
+  <script src="js/hero-preview.js"></script>
+</body>
+</html>
