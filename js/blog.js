@@ -31,16 +31,36 @@
       parseInt(m[3], 10) + ', ' + m[1];
   }
 
+  // A body entry is either a plain-text paragraph (string) or an image figure
+  // object: { img: "images/x.png", alt: "...", side: "right"|"left", caption: "..." }.
+  // Place a figure object just before the paragraph it should sit beside — the
+  // following text wraps around the float.
+  function figure(item) {
+    var side = item.side === 'left' ? 'left' : 'right';
+    var cap = item.caption
+      ? '<figcaption class="post-figure__caption">' + esc(item.caption) + '</figcaption>'
+      : '';
+    return '<figure class="post-figure post-figure--' + side + '">' +
+      '<img src="' + esc(item.img) + '" alt="' + esc(item.alt || '') + '" />' +
+      cap + '</figure>';
+  }
+
   // bodyHtml is author-controlled rich HTML (used as-is); body is an array of
-  // plain-text paragraphs (escaped and wrapped in <p>).
+  // paragraphs and/or figure objects.
   function renderBody(post) {
     if (post.bodyHtml) return post.bodyHtml;
-    return (post.body || []).map(function (p) {
-      return '<p>' + esc(p) + '</p>';
+    return (post.body || []).map(function (item) {
+      if (item && typeof item === 'object') {
+        return item.img ? figure(item) : '';
+      }
+      return '<p>' + esc(item) + '</p>';
     }).join('');
   }
 
   function getSlug() {
+    // Prefer the hash (survives file:// reliably); fall back to ?slug= query.
+    var h = (window.location.hash || '').replace(/^#/, '');
+    if (h) return decodeURIComponent(h);
     var m = /[?&]slug=([^&]*)/.exec(window.location.search);
     return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : '';
   }
@@ -51,7 +71,7 @@
       return;
     }
     el.innerHTML = posts.map(function (post, i) {
-      return '<a href="post.html?slug=' + encodeURIComponent(post.slug) + '" class="project-list__row">' +
+      return '<a href="post.html#' + encodeURIComponent(post.slug) + '" class="project-list__row">' +
         '<span class="project-list__index">' + pad2(i + 1) + '</span>' +
         '<span class="project-list__name">' + esc(post.title) + '</span>' +
         '<span class="project-list__desc">' + esc(post.summary) + '</span>' +

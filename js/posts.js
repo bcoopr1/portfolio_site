@@ -20,33 +20,22 @@
 window.BLOG_POSTS = [
 
   {
-    slug: "hello-world",
-    title: "Starting a blog",
-    date: "2026-08-30",
-    tag: "Update",
-    summary: "Why this section exists and what I’ll be posting here.",
-    bodyHtml:
-      "<p>I added this space to post updates as I build — new projects, things " +
-      "I’m learning, and the occasional write-up. It’s wired to a single data " +
-      "file, so publishing is just adding an entry.</p>" +
-      "<p>Expect notes on:</p>" +
-      "<ul>" +
-      "<li>Autonomous systems and the drones I’m prototyping</li>" +
-      "<li>Security, self-hosting, and my homelab</li>" +
-      "<li>Client work through Cooper Designs</li>" +
-      "</ul>" +
-      "<p>More soon.</p>"
-  },
-
-  {
-    slug: "example-post",
-    title: "An example post",
-    date: "2026-08-15",
-    tag: "Note",
-    summary: "A second entry so you can see how the list stacks up.",
+    slug: "less-lethal-drone",
+    title: "Less Than Lethal UAS Solution",
+    date: "2026-09-14",
+    tag: "Project",
+    summary: "A first proof of concept exploring whether a compact drone could give an officer another option — and being clear about what I can’t yet demonstrate.",
     body: [
-      "This is a plain-text post. Each string in the “body” array becomes its own paragraph, so you can write naturally without touching any HTML.",
-      "Delete this entry whenever you like — it’s only here to show the layout with more than one post. Copy either example to start your own."
+      "This project started with a question: could a small drone have a useful role in less-lethal intervention?",
+      "I’m interested in the space between drones used for observation and larger platforms designed to carry substantial payloads. My longer-term idea is a compact drone that could give an officer another option for responding to an armed threat while operating from a more protected location. Whether that idea is practical remains an open question, and this project is my first attempt to explore it.",
+      "The general concept is not new. In June 2022, Axon announced that it had begun developing a “non-lethal, remotely-operated TASER drone system.” That announcement establishes that the company explored this direction; it does not establish the broad patent restriction I initially understood it to have. For this post, I’m leaving the patent question open rather than making a claim I cannot substantiate. Source: Axon’s June 2022 announcement.",
+      "The platform I have in mind would be roughly the size of a GEPRC 3.5-inch cinewhoop. At a conceptual level, it would carry an electrically incapacitating device. I’m also interested in autonomous flight capabilities, with a human operator retaining control during critical moments and the ability to pilot the aircraft directly.",
+      { img: "images/example_POC.png", alt: "Early proof-of-concept prototype", side: "right", caption: "Proof of concept" },
+      "The motivation is to explore whether physical distance could help protect an officer responding to a dangerous situation. An officer might operate from a patrol vehicle or another protected position rather than immediately approaching an armed individual. That is the intended use case, not a capability I have demonstrated.",
+      "For this first proof of concept, I plan to use the drones I already have: my BETAFPV Meteor 75mm and Rotor Riot Vision40. My Meteor uses analog video, while my Vision40 uses a Walksnail video system. Both are small platforms, and I currently run them on 1S 650 mAh batteries.",
+      "This initial version will not include an energized electrical payload. I also haven’t established the power requirements of a future electrical system, so I cannot yet draw a firm conclusion about whether a particular battery configuration would support it.",
+      "At this stage, the project is an early prototype with substantial unanswered questions. Its size, handling, durability, and overall feasibility still need to be understood. Even a functioning mechanical demonstration would not establish that the broader concept could safely or reliably incapacitate someone.",
+      "This is the starting point for the blog: documenting the idea, the limits of the current prototype, and what I learn as the project develops. I want to be clear about the difference between what I hope to achieve and what I can actually demonstrate."
     ]
   }
 

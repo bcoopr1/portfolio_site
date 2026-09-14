@@ -1076,6 +1076,53 @@ code {
   margin-bottom: 2rem;
 }
 
+/* Blog post inline figure — floats beside the prose */
+.project-detail__desc::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.post-figure {
+  margin: 0 0 1.5rem;
+}
+
+.post-figure img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--border);
+}
+
+.post-figure__caption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  margin-top: 0.6rem;
+}
+
+.post-figure--right {
+  float: right;
+  width: min(46%, 330px);
+  margin: 0.4rem 0 1.25rem 2.5rem;
+}
+
+.post-figure--left {
+  float: left;
+  width: min(46%, 330px);
+  margin: 0.4rem 2.5rem 1.25rem 0;
+}
+
+@media (max-width: 560px) {
+  .post-figure--right,
+  .post-figure--left {
+    float: none;
+    width: 100%;
+    margin: 1.5rem 0;
+  }
+}
+
 .project-detail__links {
   display: flex;
   gap: 2rem;
