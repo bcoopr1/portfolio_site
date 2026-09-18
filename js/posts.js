@@ -26,6 +26,13 @@ window.BLOG_POSTS = [
     tag: "Project",
     summary: "An interactive 3D breakdown of the USV 1 build — drag to orbit the model, and click any part to inspect it.",
     bodyHtml:
+      "<p><strong>Purpose:</strong> Build an autonomous unmanned surface vessel (USV) " +
+      "to navigate Belmont Harbor on Lake Michigan. The boat will be driven by an " +
+      "electric motor and controlled by ArduPilot. A Raspberry Pi 5 running computer " +
+      "vision (CV) will handle obstacle detection and avoidance. The plan is to set a " +
+      "route through the marina in ArduPilot and have the CV system steer the boat " +
+      "safely around the mooring docks and boats in the harbor. The hull will be fully " +
+      "3D printed. The goal is to complete a working proof of concept within one month.</p>" +
       "<p>Below is an interactive assembly explorer for USV 1. Drag to orbit the " +
       "model, scroll to zoom, and select any component to see its details. It runs " +
       "entirely in your browser — no plugins, nothing to install.</p>" +
