@@ -37,10 +37,10 @@ window.BLOG_POSTS = [
       "model, scroll to zoom, and select any component to see its details. It runs " +
       "entirely in your browser — no plugins, nothing to install.</p>" +
       "<div class=\"post-embed\">" +
-      "<iframe src=\"USV_1_assembly_viewer.html\" title=\"USV 1 — assembly explorer\" " +
+      "<iframe src=\"USV_I1_inward_viewer.html\" title=\"USV 1 — assembly explorer\" " +
       "loading=\"lazy\" allowfullscreen></iframe>" +
       "</div>" +
-      "<p><a href=\"USV_1_assembly_viewer.html\" target=\"_blank\" rel=\"noopener\">" +
+      "<p><a href=\"USV_I1_inward_viewer.html\" target=\"_blank\" rel=\"noopener\">" +
       "Open the full-screen explorer ↗</a></p>"
   },
 
