@@ -20,6 +20,24 @@
 window.BLOG_POSTS = [
 
   {
+    slug: "usv-1-assembly",
+    title: "USV 1 — Assembly Explorer",
+    date: "2026-09-17",
+    tag: "Project",
+    summary: "An interactive 3D breakdown of the USV 1 build — drag to orbit the model, and click any part to inspect it.",
+    bodyHtml:
+      "<p>Below is an interactive assembly explorer for USV 1. Drag to orbit the " +
+      "model, scroll to zoom, and select any component to see its details. It runs " +
+      "entirely in your browser — no plugins, nothing to install.</p>" +
+      "<div class=\"post-embed\">" +
+      "<iframe src=\"USV_1_assembly_viewer.html\" title=\"USV 1 — assembly explorer\" " +
+      "loading=\"lazy\" allowfullscreen></iframe>" +
+      "</div>" +
+      "<p><a href=\"USV_1_assembly_viewer.html\" target=\"_blank\" rel=\"noopener\">" +
+      "Open the full-screen explorer ↗</a></p>"
+  },
+
+  {
     slug: "less-lethal-drone",
     title: "Less Than Lethal UAS Solution",
     date: "2026-09-14",
