@@ -1115,12 +1115,37 @@ code {
   margin: 0.4rem 2.5rem 1.25rem 0;
 }
 
+.post-figure--full {
+  float: none;
+  width: 100%;
+  margin: 1.75rem 0;
+}
+
+/* Two figures sharing a row; stacks on narrow screens */
+.post-figure-pair {
+  display: flex;
+  gap: 1.25rem;
+  clear: both;
+  margin: 1.75rem 0;
+}
+
+.post-figure-pair .post-figure {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+}
+
 @media (max-width: 560px) {
   .post-figure--right,
   .post-figure--left {
     float: none;
     width: 100%;
     margin: 1.5rem 0;
+  }
+
+  .post-figure-pair {
+    flex-direction: column;
+    gap: 1.5rem;
   }
 }
 

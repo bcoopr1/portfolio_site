@@ -20,6 +20,39 @@
 window.BLOG_POSTS = [
 
   {
+    slug: "usv-1-scale-model-print",
+    title: "USV-1 in the flesh!",
+    date: "2026-09-20",
+    tag: "Update",
+    summary: "A quarter-scale test print to check buoyancy and assembly. It went together, but it came out too container-ship. Next revision goes after the Mark VI.",
+    body: [
+      "To test my model, to see if it would float or even be able to be assembled, I printed a scale model at 25% of the original scale. All the same parts, just scaled down.",
+      {
+        img: "images/partslist.jpg",
+        alt: "All of the printed 25% scale parts laid out together.",
+        side: "right",
+        caption: "First Plate"
+      },
+      "First impressions: the first plate printed very well. The four hull segments, the deck, and the bulkheads all came out exceptionally well, aside from a leveling issue on my end. The next plate was the hull straps, the mast, and the spine for the deck. Those came out well except for the straps, which were too thin to print accurately on a 0.4 mm nozzle.",
+      "Assembled, the pieces fit together pretty well. But because of the leveling issue, some part tops weren't flush. They sat slightly angled, which added misalignment down the line. From the photos you can tell it's pretty container-ship-like. That's not what I want, I'm now realizing. It looks a little unstable in the water.",
+      {
+        img: "images/Broadside.jpg",
+        alt: "Broadside view of the assembled 25% scale hull.",
+        side: "full"
+      },
+      "For the next revision I'm modeling the boat closer to the Mark VI SOC naval boat: sleek, modern-ish, fast, and stable. That hull looks like it cuts through water faster and more efficiently than this one.",
+      {
+        pair: [
+          { img: "images/front.jpg", alt: "Head-on view of the assembled scale model." },
+          { img: "images/frontangle.jpg", alt: "Three-quarter front view of the assembled scale model." }
+        ]
+      },
+      "It's pretty nice to be able to draft a prototype frame, model it, print it, and revise it again inside a week. Rapid prototyping is the baseline now. I just bought 5 kg of orange PETG for the final model, whenever that comes around.",
+      "Stay tuned for more updates."
+    ]
+  },
+
+  {
     slug: "usv-1-assembly",
     title: "USV 1 — Assembly Explorer",
     date: "2026-09-17",

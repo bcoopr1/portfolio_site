@@ -32,11 +32,14 @@
   }
 
   // A body entry is either a plain-text paragraph (string) or an image figure
-  // object: { img: "images/x.png", alt: "...", side: "right"|"left", caption: "..." }.
-  // Place a figure object just before the paragraph it should sit beside — the
-  // following text wraps around the float.
+  // object: { img: "images/x.png", alt: "...", side: "right"|"left"|"full", caption: "..." }.
+  // Place a floated figure just before the paragraph it should sit beside — the
+  // following text wraps around it. side: "full" spans the column instead.
+  // Two images side by side: { pair: [ {img, alt, caption}, {img, alt, caption} ] }.
   function figure(item) {
-    var side = item.side === 'left' ? 'left' : 'right';
+    var side = item.side === 'left' ? 'left'
+      : item.side === 'full' ? 'full'
+      : 'right';
     var cap = item.caption
       ? '<figcaption class="post-figure__caption">' + esc(item.caption) + '</figcaption>'
       : '';
@@ -45,12 +48,20 @@
       cap + '</figure>';
   }
 
+  function figurePair(items) {
+    return '<div class="post-figure-pair">' +
+      items.slice(0, 2).map(function (it) {
+        return figure({ img: it.img, alt: it.alt, caption: it.caption, side: 'full' });
+      }).join('') + '</div>';
+  }
+
   // bodyHtml is author-controlled rich HTML (used as-is); body is an array of
   // paragraphs and/or figure objects.
   function renderBody(post) {
     if (post.bodyHtml) return post.bodyHtml;
     return (post.body || []).map(function (item) {
       if (item && typeof item === 'object') {
+        if (item.pair) return figurePair(item.pair);
         return item.img ? figure(item) : '';
       }
       return '<p>' + esc(item) + '</p>';
