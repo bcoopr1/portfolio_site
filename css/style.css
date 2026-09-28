@@ -1194,6 +1194,13 @@ code {
   min-height: 0;
 }
 
+.post-embed--right img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+}
+
 .post-embed-link {
   clear: both;
 }

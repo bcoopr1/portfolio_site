@@ -20,6 +20,21 @@
 window.BLOG_POSTS = [
 
   {
+    slug: "next-gen-autonomous-fighter-rant",
+    title: "Next Gen Autonomous Fighter Rant",
+    date: "2026-09-28",
+    tag: "Note",
+    summary: "From crawling under jets at MCAS Yuma to autonomous wingmen — who keeps the next generation of fighters in the air?",
+    bodyHtml:
+      "<figure class=\"post-embed post-embed--right\">" +
+      "<img src=\"images/MOV260926-231252-000004F%20copy.gif\" alt=\"FPV drone footage flying low over grass beneath trees\" />" +
+      "</figure>" +
+      "<p>I remember being a kid walking around MCAS Yuma staring at the brand new F-35 squadron being built and wondering, \"wow, what do they have in there that I'm not allowed to see?\" Being the son of a squadron CO, I had the one fun perk of being a military brat: access. My dad would always take us into work and let us crawl around the squadron's hangar while the mechanics worked. I remember laying under an F-5 and getting lost in the body work while my dad worked. The day the new F-35 squadron opened and their brand new fancy hangar was built was a day to remember. The cool new architecture screamed \"better than you\" at all the other squadrons.</p>" +
+      "<p>Now flash forward to today and we're giving away F-35s to other nations like hotcakes, and they seem to have lost their flashy appeal. While the platform has been around for nearly 30 years now, it is still the cutting edge of other nations' military. This begs the question: what's next? With Lockheed and Northrop teasing the new age of fighters, people are starting to see that the next wave of fighter jets is coming. Even with companies like Anduril and Shield AI having their brand new autonomous wingmen to help protect human pilots, the picture has never been clearer, that the normal age of aviation we knew is gone.</p>" +
+      "<p>These advancements in military aviation are not without their challenges though. These new systems introduce more technology, new protocols, and even new kinds of personnel required to operate these machines. This bleeding-edge technology is still wet with blood and requires highly trained personnel to keep them up in the air. These people are not the hardened, grizzled mechanics with calluses the size of walnuts on their hands but now the wicked smart software engineers armed with laptops instead of wrenches. That being said, mechanics are still needed and their wealth of knowledge is invaluable, but it still begs the question: how efficient will these platforms be able to operate in wartime scenarios? Will Anduril fly out the 29-year-old matcha bro to an aircraft carrier, or will the military find someone who understands the intricacies? These are questions only time will tell, but something you should definitely keep in mind.</p>"
+  },
+
+  {
     slug: "hull-02-rev-v",
     title: "USV-1.2: HULL Revision",
     date: "2026-09-25",
