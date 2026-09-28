@@ -20,6 +20,35 @@
 window.BLOG_POSTS = [
 
   {
+    slug: "hull-02-rev-v",
+    title: "USV-1.2: HULL Revision",
+    date: "2026-09-25",
+    tag: "Project",
+    summary: "The second hull, fifth revision. Drag to orbit the model and click any part to inspect it.",
+    bodyHtml:
+      "<div class=\"post-embed post-embed--right\">" +
+      "<iframe src=\"HULL02_RevV_Viewer.html\" title=\"HULL 02 Rev V viewer\" " +
+      "loading=\"lazy\" allowfullscreen></iframe>" +
+      "</div>" +
+      "<p>After printing and evaluating the initial prototype, I identified several " +
+      "necessary design changes. The original hull carried excessive freeboard and " +
+      "superstructure height, which raised the center of gravity and compromised " +
+      "stability in rougher sea states. The taller profile also enlarged the vessel's " +
+      "visual and radar signature, making the USV easier for adversaries to detect " +
+      "and target.</p>" +
+      "<p>The revised model retains the original footprint but sits lower in the " +
+      "water, significantly reducing its silhouette. I also incorporated angled, " +
+      "faceted surfaces on the superstructure, drawing on low-observable design " +
+      "principles to deflect radar returns away from the emitting source. An antenna " +
+      "mast mounted above the deck maintains the communication link with the base " +
+      "station during harbor navigation.</p>" +
+      "<p>The 5kg of orange PETG just got delivered and now I'm waiting on my next " +
+      "round of funding (paycheck) to purchase the electronics.</p>" +
+      "<p class=\"post-embed-link\"><a href=\"HULL02_RevV_Viewer.html\" target=\"_blank\" rel=\"noopener\">" +
+      "Open the full-screen viewer ↗</a></p>"
+  },
+
+  {
     slug: "usv-1-scale-model-print",
     title: "USV-1 in the flesh!",
     date: "2026-09-20",

@@ -1182,6 +1182,50 @@ code {
   }
 }
 
+/* Smaller embed floated beside the prose; the text wraps to its left */
+.post-embed--right {
+  float: right;
+  width: min(50%, 440px);
+  margin: 0.4rem 0 1.5rem 2.5rem;
+}
+
+.post-embed--right iframe {
+  height: 460px;
+  min-height: 0;
+}
+
+.post-embed-link {
+  clear: both;
+}
+
+/* Wide screens: pull the viewer out of the text column to the page's right edge */
+@media (min-width: 1300px) {
+  #blog-post {
+    position: relative;
+  }
+  .post-embed--right {
+    float: none;
+    position: absolute;
+    right: 2rem;
+    width: 480px;
+    margin: 0.4rem 0 0;
+  }
+  .post-embed--right iframe {
+    height: 500px;
+  }
+}
+
+@media (max-width: 760px) {
+  .post-embed--right {
+    float: none;
+    width: auto;
+    margin: 1.5rem 0;
+  }
+  .post-embed--right iframe {
+    height: 70vh;
+  }
+}
+
 .project-detail__links {
   display: flex;
   gap: 2rem;
