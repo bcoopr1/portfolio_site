@@ -338,9 +338,11 @@ code {
   position: absolute;
   inset: 0;
   font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(0.55rem, 1vw, 0.85rem);
-  line-height: 1.25;
+  font-size: clamp(4px, 0.34vw, 7px);
+  line-height: 1.15;
   letter-spacing: 0;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
   color: var(--text);
   opacity: 0;
   white-space: pre;
@@ -359,33 +361,6 @@ code {
   opacity: 0;
   transform: translateY(12px);
   position: relative;
-  z-index: 1;
-}
-
-.hero__bird,
-.hero__drone {
-  position: absolute;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(0.7rem, 1.3vw, 1.05rem);
-  color: var(--text);
-  opacity: 0;
-  white-space: pre;
-  user-select: none;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.hero__celestial,
-.hero__cloud {
-  position: absolute;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(0.7rem, 1.3vw, 1.05rem);
-  line-height: 1.25;
-  color: var(--text);
-  opacity: 0;
-  white-space: pre;
-  user-select: none;
-  pointer-events: none;
   z-index: 1;
 }
 
@@ -427,12 +402,6 @@ code {
   color: #5c5480;
 }
 
-.hero--night .hero__bird,
-.hero--night .hero__drone,
-.hero--night .hero__celestial,
-.hero--night .hero__cloud {
-  color: #cdc7e0;
-}
 
 /* =========================================
    HOME — INTRO
