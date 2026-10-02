@@ -16,7 +16,6 @@ const hero = document.querySelector('.hero');
 const el   = document.querySelector('.hero__ascii');
 if (!hero || !el) return;
 
-const NIGHT = typeof getIsNight === 'function' ? getIsNight() : false;
 const STILL = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ── Tunables ─────────────────────────────
@@ -24,11 +23,13 @@ const CAM_Y     = 1.7;     // eye height above the water (m)
 const PITCH     = 0.13;    // tilt up into the valley (rad)
 const T_MAX     = 9000;    // view distance (m)
 const MAX_H     = 2800;    // tallest possible terrain (m) — ray early-out
-const FOG       = NIGHT ? 1700 : 2600;
+const FOG_DAY   = 2600;
+const FOG_NIGHT = 1700;
 const TREELINE  = 820;
 const NEAR_TREE = 650;     // beyond this, forest is a canopy texture
 const TREE_CELL = 8;
 const FPS       = 15;
+const CYCLE     = 360;     // seconds for a full 24 h day
 
 // Density ramps (sparse → dense). Light glyphs on a dark hero.
 const RAMP  = " .'`^\",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
@@ -160,48 +161,84 @@ function height(x, z, t) {
 // ── Scene state (rebuilt on resize) ──────
 let cols = 0, rows = 0, cw = 0, lh = 0, F = 0;
 let PW = 0, PH = 0, PHI0 = 0, A0 = 0, DPHI = 0, DA = 0;
-let pType, pB, pD;                 // panorama: type, brightness, distance
+let pType, pB, pD;                 // panorama: type, brightness (current light), distance
+let pBN, pNX, pNY, pNZ, pJ, pFog, pEdge; // night brightness, normal, jitter, day fog, ridge ink
 let cP, cPhi, cA, cDepth, cStatic; // per cell
 let buf;                           // char codes
 let reveal;                        // per-column reveal time (ms)
 let startT = 0;
 
-const SUN  = NIGHT ? { phi: -0.62, a: 0.52 } : { phi: 0.95, a: 0.36 };
-const LX = Math.sin(SUN.phi) * Math.cos(SUN.a), LY = Math.sin(SUN.a), LZ = Math.cos(SUN.phi) * Math.cos(SUN.a);
-const SVX = LX, SVY = LY, SVZ = LZ;
+// ── Day / night cycle ────────────────────
+// Starts from the visitor's clock and runs a full day every CYCLE seconds.
+// Night (20:00–06:00) is held fixed under a still moon; dusk and dawn
+// blend the daylight scene into it. env.n is the night amount, 0..1.
+const HOUR0 = (() => { const d = new Date(); return d.getHours() + d.getMinutes() / 60; })();
+const MOON_NIGHT = { phi: -0.62, a: 0.52 };
 
-function shadeSurface(x, z, t, h, type) {
+function body(phi, a) {
+  return { phi, a, x: Math.sin(phi) * Math.cos(a), y: Math.sin(a), z: Math.cos(phi) * Math.cos(a) };
+}
+const MOON_VEC = body(MOON_NIGHT.phi, MOON_NIGHT.a);
+const env = { hour: HOUR0, n: 1, sun: MOON_VEC, moon: MOON_VEC };
+
+function setClock(h) {
+  env.hour = h;
+  const night = h >= 20 || h < 6;
+  env.n = night ? 1 : h >= 12 ? sstep(17.5, 20, h) : 1 - sstep(6, 8.5, h);
+  // Sun rises behind the left wall, arcs over the valley, sets on the right
+  const s = clamp((h - 6) / 14, 0, 1);
+  env.sun = body(-1.35 + 2.7 * s, -0.10 + 0.80 * Math.sin(Math.PI * s));
+  // Moon climbs into its night spot at dusk and slides away at dawn
+  if (night) env.moon = MOON_VEC;
+  else if (h >= 12) { const u = sstep(17.5, 20, h); env.moon = body(-1.25 + 0.63 * u, -0.08 + 0.60 * u); }
+  else { const v = sstep(6, 8.5, h); env.moon = body(-0.62 + 0.9 * v, 0.52 - 0.62 * v); }
+}
+setClock(HOUR0);
+const isNight = () => env.n >= 0.5;
+
+function baseLight(type, lam, j) {
+  switch (type) {
+    case T_TREE: return 0.16 + 0.42 * lam + 0.16 * j;
+    case T_ROCK: return 0.20 + 0.62 * lam + 0.06 * j;
+    case T_SNOW: return 0.58 + 0.42 * lam;
+    default:     return 0.26 + 0.40 * lam + 0.10 * j;
+  }
+}
+
+// Classifies the surface and records its normal + jitter (sN*, sJ) so it
+// can be relit as the sun moves. Returns the fixed moonlit night brightness.
+let sNX = 0, sNY = 1, sNZ = 0, sJ = 0;
+function surface(x, z, t, h, type) {
   const e = Math.max(0.25, t * 0.004);
   const hx = height(x + e, z, t) - height(x - e, z, t);
   const hz = height(x, z + e, t) - height(x, z - e, t);
   let nx = -hx, ny = 2 * e, nz = -hz;
   const nl = Math.hypot(nx, ny, nz);
   nx /= nl; ny /= nl; nz /= nl;
-  const lam = Math.max(0, nx * LX + ny * LY + nz * LZ);
+  const lam = Math.max(0, nx * MOON_VEC.x + ny * MOON_VEC.y + nz * MOON_VEC.z);
 
   if (type === T_GRASS) {
     if (ny < 0.72) type = T_ROCK;
     if (h > 1250 + 250 * vnoise(x / 300, z / 300) && ny > 0.45) type = T_SNOW;
   }
   const j = hash2(Math.floor(x * 3), Math.floor(z * 3)) - 0.5;
-  let b;
-  switch (type) {
-    case T_TREE: b = 0.16 + 0.42 * lam + 0.16 * j; break;
-    case T_ROCK: b = 0.20 + 0.62 * lam + 0.06 * j; break;
-    case T_SNOW: b = 0.58 + 0.42 * lam; break;
-    default:     b = 0.26 + 0.40 * lam + 0.10 * j;
-  }
-  const fog = 1 - Math.exp(-t / FOG);
+  sNX = nx; sNY = ny; sNZ = nz; sJ = j;
+  let b = baseLight(type, lam, j);
+  const fog = 1 - Math.exp(-t / FOG_NIGHT);
   b = b + (0.24 - b) * fog;
-  if (NIGHT) b *= 0.62;
+  b *= 0.62;
   hitType = type;
   return b;
 }
 
 function buildPanorama() {
-  pType = new Uint8Array(PW * PH);
-  pB    = new Float32Array(PW * PH);
-  pD    = new Float32Array(PW * PH);
+  const N = PW * PH;
+  pType = new Uint8Array(N);
+  pB    = new Float32Array(N);
+  pBN   = new Float32Array(N);
+  pD    = new Float32Array(N);
+  pNX = new Float32Array(N); pNY = new Float32Array(N); pNZ = new Float32Array(N);
+  pJ = new Float32Array(N); pFog = new Float32Array(N); pEdge = new Uint8Array(N);
 
   for (let i = 0; i < PW; i++) {
     const phi = PHI0 + (i + 0.5) * DPHI;
@@ -214,10 +251,12 @@ function buildPanorama() {
       if (r >= row) {
         if (r >= PH) r = PH - 1;
         let type = hitType, b = 0;
-        if (type !== T_WATER) { b = shadeSurface(x, z, t, h, type); type = hitType; }
+        if (type !== T_WATER) { b = surface(x, z, t, h, type); type = hitType; }
+        const fog = 1 - Math.exp(-t / FOG_DAY);
         for (let k = row; k <= r; k++) {
           const idx = k * PW + i;
-          pType[idx] = type; pB[idx] = b; pD[idx] = t;
+          pType[idx] = type; pBN[idx] = b; pD[idx] = t;
+          pNX[idx] = sNX; pNY[idx] = sNY; pNZ[idx] = sNZ; pJ[idx] = sJ; pFog[idx] = fog;
         }
         row = r + 1;
       }
@@ -232,7 +271,7 @@ function buildPanorama() {
     for (let k = 0; k < PH - 1; k++) {
       const idx = k * PW + i, up = idx + PW;
       if (pType[idx] === T_SKY || pType[idx] === T_WATER) continue;
-      if (pType[up] === T_SKY || pD[up] > pD[idx] * 1.5 + 40) pB[idx] = Math.min(1, pB[idx] + 0.2);
+      if (pType[up] === T_SKY || pD[up] > pD[idx] * 1.5 + 40) { pBN[idx] = Math.min(1, pBN[idx] + 0.2); pEdge[idx] = 1; }
     }
   }
 }
@@ -307,14 +346,8 @@ function build() {
     const pi = pr * PW + pc;
     cP[i] = pi;
     cDepth[i] = pD[pi];
-    const type = pType[pi];
-    if (type === T_SKY || type === T_WATER) continue;
-    const b = pB[pi];
-    let ch;
-    if (type === T_GRASS && pD[pi] < 45 && b > 0.18) ch = BLADES[Math.floor(hash2(pi, 3) * BLADES.length)];
-    else ch = RAMP[clamp(Math.round(b * (RAMP.length - 1)), 0, RAMP.length - 1)];
-    cStatic[i] = ch.charCodeAt(0);
   }
+  relight(true);
 
   buf = new Uint16Array(n);
   reveal = new Float32Array(cols);
@@ -322,38 +355,84 @@ function build() {
   order.forEach((c, k) => { reveal[c] = 450 + (k / cols) * 1300; });
 }
 
+// Re-shade the terrain for the current sun / moon. Night is fixed, so it
+// is only recomputed while the light is actually changing.
+let litHour = -1, litN = -1;
+function relight(force) {
+  const n = env.n;
+  if (!force && ((n >= 1 && litN >= 1) || Math.abs(env.hour - litHour) < 0.05)) return;
+  litHour = env.hour; litN = n;
+
+  if (n >= 1) pB.set(pBN);
+  else {
+    const sun = env.sun, la = Math.max(sun.a, 0.04);
+    const Lx = Math.sin(sun.phi) * Math.cos(la), Ly = Math.sin(la), Lz = Math.cos(sun.phi) * Math.cos(la);
+    const dl = 0.45 + 0.55 * sstep(-0.05, 0.4, sun.a);   // dimmer, flatter light at golden hour
+    for (let pi = 0; pi < pB.length; pi++) {
+      const ty = pType[pi];
+      if (ty === T_SKY || ty === T_WATER) continue;
+      const lam = Math.max(0, pNX[pi] * Lx + pNY[pi] * Ly + pNZ[pi] * Lz);
+      let b = baseLight(ty, lam, pJ[pi]);
+      b = (b + (0.24 - b) * pFog[pi]) * dl;
+      if (pEdge[pi]) b = Math.min(1, b + 0.2);
+      pB[pi] = n <= 0 ? b : b + (pBN[pi] - b) * n;
+    }
+  }
+
+  for (let i = 0; i < cP.length; i++) {
+    const pi = cP[i], type = pType[pi];
+    if (type === T_SKY || type === T_WATER) continue;
+    const b = pB[pi];
+    let ch;
+    if (type === T_GRASS && pD[pi] < 45 && b > 0.18) ch = BLADES[Math.floor(hash2(pi, 3) * BLADES.length)];
+    else ch = RAMP[clamp(Math.round(b * (RAMP.length - 1)), 0, RAMP.length - 1)];
+    cStatic[i] = ch.charCodeAt(0);
+  }
+}
+
 // ── Sky & water ──────────────────────────
 function sky(phi, a, time, seed) {
   const ca = Math.cos(a);
   const x = Math.sin(phi) * ca, y = Math.sin(a), z = Math.cos(phi) * ca;
   const up = Math.max(a, 0);
-  let b = NIGHT ? 0.04 + 0.10 * Math.exp(-up * 7) : 0.08 + 0.24 * Math.exp(-up * 5);
+  const N = env.n;
 
-  const sd = x * SVX + y * SVY + z * SVZ;
-  let cover = 0;
+  let cn = 0, cover = 0;
   if (a > 0.012) {
     const t = 1900 / y;
-    const n = fbm((x * t + time * 9) / 1500 + SX, (z * t) / 1500 + SZ, 4);
-    cover = sstep(0.50, 0.74, n) * sstep(0.012, 0.10, a);
-    const cb = NIGHT ? 0.12 + 0.12 * n : 0.34 + 0.55 * (n - 0.45) + 0.25 * Math.max(0, sd) ** 6;
-    b += (cb - b) * cover;
+    cn = fbm((x * t + time * 9) / 1500 + SX, (z * t) / 1500 + SZ, 4);
+    cover = sstep(0.50, 0.74, cn) * sstep(0.012, 0.10, a);
   }
 
-  if (NIGHT) {
+  let bn = 0, bd = 0;
+  if (N > 0) {
+    const m = env.moon;
+    let b = 0.04 + 0.10 * Math.exp(-up * 7);
+    const sd = x * m.x + y * m.y + z * m.z;
+    if (a > 0.012) b += (0.12 + 0.12 * cn - b) * cover;
     // Moon: crescent disc plus soft halo
     if (sd > 0.99955) {
-      const off = x * Math.cos(SUN.phi + 0.02) - z * Math.sin(SUN.phi + 0.02);
+      const off = x * Math.cos(m.phi + 0.02) - z * Math.sin(m.phi + 0.02);
       b = off < 0.012 ? 0.95 : 0.35;
     } else b += 0.18 * Math.max(0, sd) ** 400 * (1 - cover);
     if (a > 0.03 && cover < 0.35) {
       const s = hash2(seed, 91);
       if (s > 0.9935) b = Math.max(b, 0.45 + 0.5 * (0.5 + 0.5 * Math.sin(time * (1 + 3 * s) + s * 300)));
     }
-  } else {
+    bn = b;
+  }
+  if (N < 1) {
+    const sun = env.sun;
+    let b = 0.08 + 0.24 * Math.exp(-up * 5);
+    const sd = x * sun.x + y * sun.y + z * sun.z;
+    if (a > 0.012) b += (0.34 + 0.55 * (cn - 0.45) + 0.25 * Math.max(0, sd) ** 6 - b) * cover;
     if (sd > 0.99965) b = 1;
     else b += (0.5 * Math.max(0, sd) ** 90 + 0.12 * Math.max(0, sd) ** 8) * (1 - 0.6 * cover);
+    // Sky dims as the sun drops toward the ridges
+    if (sd <= 0.99965) b *= 0.6 + 0.4 * sstep(-0.08, 0.25, sun.a);
+    bd = b;
   }
-  return b;
+  return N >= 1 ? bn : N <= 0 ? bd : bd + (bn - bd) * N;
 }
 
 function water(i, time) {
@@ -377,17 +456,19 @@ function water(i, time) {
   // Fresnel: glassy toward the horizon, darker at our feet
   const g = clamp(-a * 2.4, 0, 1);
   const fr = 0.18 + 0.82 * (1 - g) ** 3;
-  let b = refl * fr * 0.92 + (1 - fr) * (NIGHT ? 0.03 : 0.07);
+  const deep = env.n >= 1 ? 0.03 : 0.07 - 0.04 * env.n;
+  let b = refl * fr * 0.92 + (1 - fr) * deep;
 
   // Current lines drifting downstream toward the camera
   const cur = vnoise(x / 2.2 + 40, (z + time * 1.3) / 0.7);
   if (cur > 0.8 && tw < 400) b += 0.14;
 
   // Glitter path under the sun / moon
-  const dp = phi - SUN.phi, da = ar - SUN.a;
+  const night = isNight(), lamp = night ? env.moon : env.sun;
+  const dp = phi - lamp.phi, da = ar - lamp.a;
   const spread = 0.05 + 0.10 * Math.min(1, 40 / tw);
-  if (Math.abs(dp) < spread && Math.abs(da) < 0.30 && hash2(i, (time * 8) | 0) > 0.78) {
-    return NIGHT ? 43 : 42;  // '+' / '*'
+  if (lamp.a > 0.02 && Math.abs(dp) < spread && Math.abs(da) < 0.30 && hash2(i, (time * 8) | 0) > 0.78) {
+    return night ? 43 : 42;  // '+' / '*'
   }
   const k = clamp(Math.round(b * (WRAMP.length - 1) * 1.15), 0, WRAMP.length - 1);
   return WRAMP.charCodeAt(k);
@@ -483,6 +564,7 @@ function spawnGeese() {
 }
 
 function spawnSwifts() {
+  const bats = isNight();
   const n = 3 + Math.floor(rnd() * 4);
   const flock = [];
   for (let k = 0; k < n; k++) {
@@ -490,7 +572,7 @@ function spawnSwifts() {
     flock.push({
       x: riverX(z) + (rnd() - 0.5) * 30, y: 1.5 + rnd() * 6, z,
       hd: rnd() * 6.28, turn: 0, tt: 0, sp: 9 + rnd() * 5,
-      span: NIGHT ? 0.3 : 0.33, body: NIGHT ? 'w' : 'v',
+      span: bats ? 0.3 : 0.33, body: bats ? 'w' : 'v',
       ph: rnd() * 6, gl: 0, gliding: false, wing: 0,
     });
   }
@@ -501,7 +583,7 @@ function spawnSwifts() {
       const leaving = this.age > this.life - 5;
       for (const b of flock) {
         b.tt -= dt;
-        if (b.tt <= 0) { b.turn = (rnd() - 0.5) * (NIGHT ? 7 : 4.5); b.tt = 0.3 + rnd() * 1.1; }
+        if (b.tt <= 0) { b.turn = (rnd() - 0.5) * (bats ? 7 : 4.5); b.tt = 0.3 + rnd() * 1.1; }
         // Stay over the river corridor
         const cx = riverX(b.z) - b.x;
         if (!leaving && (Math.abs(cx) > 30 || b.z < 18 || b.z > 160)) {
@@ -513,7 +595,7 @@ function spawnSwifts() {
         b.x += Math.sin(b.hd) * b.sp * dt;
         b.z += Math.cos(b.hd) * b.sp * dt;
         b.y = leaving ? b.y + 6 * dt : clamp(b.y + Math.sin(b.hd * 3 + this.age) * 2 * dt, 0.8, 9);
-        flap(b, dt, NIGHT ? 11 : 8, NIGHT ? 0.1 : 0.35);
+        flap(b, dt, bats ? 11 : 8, bats ? 0.1 : 0.35);
       }
     },
     draw(time) { for (const b of flock) drawBird(b, time); },
@@ -564,15 +646,80 @@ function spawnHeron() {
   });
 }
 
+// Quadcopter art by apparent size. '~' marks prop discs (animated),
+// '*' marks nav lights (blink). All rows in a tier share one width.
+const DRONE_M = [
+  "-~-   -~-",
+  " '\\[o]/' ",
+  "  /   \\  ",
+];
+const DRONE_L = [
+  "  ~~~~~     ~~~~~  ",
+  "  *_|_________|_*  ",
+  "     \\_[(O)]_/     ",
+  "      _/   \\_      ",
+];
+const DRONE_XL = [
+  " ~~~~~~~~~         ~~~~~~~~~ ",
+  "    [=]               [=]    ",
+  "    *\\======[###]======/*    ",
+  "            [(O)]            ",
+  "        __/       \\__        ",
+];
+const PROP = "~-=";
+
+// Multi-row sprite centred on (c, r) with an optional lean (shear)
+function stampArt(art, c, r, depth, lean) {
+  const mid = (art.length - 1) / 2;
+  art.forEach((row, k) => stamp(row, c + Math.round(lean * (mid - k) * 0.5), r + k - Math.round(mid), depth));
+}
+
+function stampArtReflection(art, x, y, z, time) {
+  const p = project(x, -y, z);
+  const mid = (art.length - 1) / 2;
+  for (let k = 0; k < art.length; k++) {
+    const row = art[art.length - 1 - k], rr = p.r + k - Math.round(mid);
+    if (rr < 0 || rr >= rows) continue;
+    const x0 = p.c - (row.length >> 1);
+    for (let j = 0; j < row.length; j++) {
+      const cc = x0 + j;
+      if (cc < 0 || cc >= cols || row[j] === ' ') continue;
+      const i = rr * cols + cc;
+      if (pType[cP[i]] !== T_WATER || cDepth[i] < p.d * 0.9) continue;
+      if (vnoise(cc * 0.7, time * 3 + rr) > 0.55) continue;
+      buf[i] = (FLIP[row[j]] || row[j]).charCodeAt(0);
+    }
+  }
+}
+
 function spawnDrone() {
-  const d = { x: riverX(900) + (rnd() - 0.5) * 200, y: 120 + rnd() * 80, z: 900, vx: 0, vy: 0, vz: 0 };
-  let tgt = null, hover = 0, legs = 3 + Math.floor(rnd() * 3), leaving = false;
-  const pick = () => {
-    const z = 35 + rnd() * 420;
-    const low = rnd() < 0.35;
-    return { x: riverX(z) + (rnd() - 0.5) * (low ? 20 : 180), y: low ? 3 + rnd() * 4 : 15 + rnd() * 110, z };
+  // Enter from the edge of the frame, mid-valley
+  const side = rnd() < 0.5 ? -1 : 1, z0 = 60 + rnd() * 100;
+  const d = { x: valleyX(z0) + side * z0 * 1.8, y: 15 + rnd() * 30, z: z0, vx: 0, vy: 0, vz: 0 };
+  let hover = 0, leaving = false, inspecting = false;
+
+  const roam = () => {
+    const z = 35 + rnd() * 260, low = rnd() < 0.35;
+    return { x: riverX(z) + (rnd() - 0.5) * (low ? 20 : 180), y: low ? 3 + rnd() * 4 : 15 + rnd() * 90, z };
   };
-  tgt = pick();
+  // Close pass: sweeps by a few metres off the camera without stopping
+  const pass = () => ({ x: (rnd() < 0.5 ? -1 : 1) * (4 + rnd() * 7), y: 2.5 + rnd() * 5, z: 10 + rnd() * 12, pass: true });
+  // Inspection: comes up to the camera and hangs there, gimbal on us
+  const inspect = () => ({ x: (rnd() - 0.5) * 5, y: 2.5 + rnd() * 2.5, z: 7 + rnd() * 5, inspect: true });
+
+  const plan = [roam()];
+  plan.push(rnd() < 0.5 ? inspect() : pass());
+  plan.push(roam());
+  if (rnd() < 0.6) plan.push(rnd() < 0.5 ? pass() : inspect());
+  plan.push(roam());
+  let tgt = plan.shift();
+
+  const next = () => {
+    inspecting = false;
+    if (plan.length) tgt = plan.shift();
+    else { leaving = true; tgt = { x: riverX(1600) + (rnd() - 0.5) * 300, y: 220, z: 1600 }; }
+  };
+
   fliers.push({
     kind: 'drone', age: 0, life: 400,
     update(dt, time) {
@@ -581,52 +728,170 @@ function spawnDrone() {
         hover -= dt;
         d.vx *= 0.9; d.vy *= 0.9; d.vz *= 0.9;
         d.y += Math.sin(time * 2.1) * 0.25 * dt;
-        if (hover <= 0) {
-          if (--legs <= 0) { leaving = true; tgt = { x: riverX(1600) + (rnd() - 0.5) * 300, y: 220, z: 1600 }; }
-          else tgt = pick();
-        }
+        d.x += Math.sin(time * 1.3) * 0.15 * dt;
+        if (hover <= 0) next();
       } else {
         // Steer toward the waypoint with capped speed and accel
         const ex = tgt.x - d.x, ey = tgt.y - d.y, ez = tgt.z - d.z;
         const dist = Math.hypot(ex, ey, ez);
-        const vmax = Math.min(15, dist * 0.35);
+        const vmax = tgt.pass ? 13 : Math.min(18, dist * 0.4);
         const ax = (ex / dist) * vmax - d.vx, ay = (ey / dist) * vmax - d.vy, az = (ez / dist) * vmax - d.vz;
-        const al = Math.hypot(ax, ay, az), cap = 4 * dt;
+        const al = Math.hypot(ax, ay, az), cap = (tgt.pass ? 6 : 4) * dt;
         const s = al > cap ? cap / al : 1;
         d.vx += ax * s; d.vy += ay * s; d.vz += az * s;
-        if (dist < 2) { if (leaving) this.age = this.life; else hover = 2 + rnd() * 6; }
+        if (tgt.pass && dist < 4) next();
+        else if (dist < 1.5) {
+          if (leaving) this.age = this.life;
+          else if (tgt.inspect) { inspecting = true; hover = 3 + rnd() * 3; }
+          else hover = 2 + rnd() * 5;
+        }
       }
       d.x += d.vx * dt; d.y += d.vy * dt; d.z += d.vz * dt;
     },
     draw(time) {
       const p = project(d.x, d.y, d.z);
-      const w = 0.55 * p.px / cw;
-      const blink = (time % 1.2) < 0.12;
-      const spin = ((time * 20) | 0) & 1;
-      let g;
-      if (NIGHT) g = w < 1.8 ? (blink ? '*' : '.') : (blink ? '.*.' : '. .');
-      else if (w < 1.2) g = blink ? '*' : '+';
-      else if (w < 3) g = blink ? '-*-' : (spin ? '-o-' : '=o=');
-      else g = (spin ? 'x=' : '+=') + (blink ? '*' : 'o') + (spin ? '=x' : '=+');
-      stamp(g, p.c, p.r, p.d);
-      if (d.y < 60) stampReflection(g, d.x, d.y, d.z, time);
+      const w = 0.9 * p.px / cw;
+      const blink = (time % 1.2) < 0.15;
+      const frame = (time * 15) | 0;
+      if (w < 5) {
+        let g;
+        if (isNight() && w < 3) g = w < 1.8 ? (blink ? '*' : '.') : (blink ? '.*.' : '. .');
+        else if (w < 1.2) g = blink ? '*' : '+';
+        else if (w < 3) g = blink ? '-*-' : (frame & 1 ? '-o-' : '=o=');
+        else g = (frame & 1 ? 'x=' : '+=') + (blink ? '*' : 'o') + (frame & 1 ? '=x' : '=+');
+        stamp(g, p.c, p.r, p.d);
+        if (d.y < 60) stampReflection(g, d.x, d.y, d.z, time);
+        return;
+      }
+      const base = w < 10 ? DRONE_M : w < 17 ? DRONE_L : DRONE_XL;
+      const art = base.map((row) => {
+        let out = '';
+        for (let j = 0; j < row.length; j++) {
+          const ch = row[j];
+          if (ch === '~') out += PROP[(j + frame) % 3];
+          else if (ch === '*') out += blink ? '*' : ' ';
+          else if (ch === 'O' && inspecting) out += '@';
+          else out += ch;
+        }
+        return out;
+      });
+      // Lean into the direction of travel, as a quad pitches to move
+      const lean = clamp(d.vx / 12, -1, 1) * (base.length - 1);
+      stampArt(art, p.c, p.r, p.d, lean);
+      if (d.y < 60) stampArtReflection(art, d.x, d.y, d.z, time);
+    },
+  });
+}
+
+// F/A-18 low-level run down the valley, trailing wingtip vapor
+const JET_SPAN  = 12.3;  // m
+const JET_TRAIL = 4.5;   // s a vapor trail lingers
+
+// Hug the valley floor, then climb out over the peaks at its head
+function jetX(z, off) { return valleyX(z) + off * Math.sin(z / 600); }
+function jetY(z, alt) { return alt + sstep(1100, 4200, z) * 1700; }
+
+function trailChar(dc, dr, fade) {
+  if (fade > 0.6) return '.';
+  if (fade > 0.3) return Math.abs(dr) > Math.abs(dc) ? ':' : '~';
+  const ac = Math.abs(dc), ar = Math.abs(dr);
+  if (ar < ac * 0.4) return '=';
+  if (ac < ar * 0.4) return '|';
+  return (dc > 0) === (dr > 0) ? '\\' : '/';
+}
+
+function spawnJet() {
+  const away = rnd() < 0.6;   // from behind us up-valley, or head-on at us
+  const alt = 70 + rnd() * 90, off = (rnd() - 0.5) * 160, v = 230;
+  let z = away ? -500 : 5200, bank = 0;
+  const jet = { x: 0, y: 0, z: 0 };
+  const trail = [];           // wingtip samples: centre, half-span offset, time, vapor strength
+
+  fliers.push({
+    kind: 'jet', age: 0, life: 90,
+    update(dt, time) {
+      this.age += dt;
+      while (trail.length && time - trail[0].t > JET_TRAIL) trail.shift();
+      if (away ? z > 5600 : z < -600) {
+        if (!trail.length) this.age = this.life;
+        return;
+      }
+      z += (away ? v : -v) * dt;
+      jet.x = jetX(z, off); jet.y = jetY(z, alt); jet.z = z;
+
+      // Heading from the path; bank from lateral acceleration (v² · x'')
+      let hx = (jetX(z + 5, off) - jet.x) / 5, hz = 1;
+      const hl = Math.hypot(hx, hz); hx /= hl; hz /= hl;
+      const x2 = (jetX(z + 20, off) - 2 * jet.x + jetX(z - 20, off)) / 400;
+      bank = clamp(Math.atan(v * v * x2 / 9.8), -1.3, 1.3);
+
+      // Vortices condense hardest when pulling G in a turn
+      const half = JET_SPAN / 2;
+      trail.push({
+        x: jet.x, y: jet.y, z: jet.z, t: time,
+        ox: hz * half * Math.cos(bank), oy: half * Math.sin(bank), oz: -hx * half * Math.cos(bank),
+        s: 0.8 + 0.2 * Math.min(1, Math.abs(bank) * 1.5),
+      });
+    },
+    draw(time) {
+      // Vapor first so the airframe paints over it
+      for (const side of [-1, 1]) {
+        let prev = null;
+        for (const s of trail) {
+          const age = time - s.t, fade = age / JET_TRAIL;
+          const spread = 1 + age * 0.5;
+          const p = project(s.x + side * s.ox * spread, s.y + side * s.oy * spread - age * 0.8, s.z + side * s.oz * spread);
+          if (prev) {
+            const dc = p.c - prev.c, dr = p.r - prev.r;
+            const steps = Math.max(Math.abs(dc), Math.abs(dr));
+            if (steps > 0 && steps < cols) {
+              const ch = trailChar(dc, dr, fade).charCodeAt(0);
+              for (let k = 0; k <= steps; k++) {
+                const c = Math.round(prev.c + dc * k / steps), r = Math.round(prev.r + dr * k / steps);
+                if (c < 0 || c >= cols || r < 0 || r >= rows) continue;
+                // Dissipating vapor thins out unevenly
+                if (hash2(c * 7 + r, (s.t * 15) | 0) > s.s * (1 - fade * 0.85)) continue;
+                const i = r * cols + c;
+                if (cDepth[i] > p.d) buf[i] = ch;
+              }
+            }
+          }
+          prev = p;
+        }
+      }
+
+      if (away ? z > 5600 : z < -600) return;
+      const p = project(jet.x, jet.y, jet.z);
+      const w = JET_SPAN * p.px / cw;
+      const banked = Math.abs(bank) > 0.35, right = bank > 0;
+      if (w < 1.5) stamp('+', p.c, p.r, p.d);
+      else if (w < 4) stamp(banked ? (right ? '.o\'' : '\'o.') : '-o-', p.c, p.r, p.d);
+      else if (w < 9) stamp(banked ? (right ? '_.o\'`' : '`\'o._') : '=-o-=', p.c, p.r, p.d);
+      else {
+        // Rear/front view: canted twin tails over wings and twin engines
+        stamp('\\ /', p.c, p.r - 1, p.d);
+        stamp(banked ? (right ? '._.(o_o)\'`' : '`\'(o_o)._.') : '==(o_o)==', p.c, p.r, p.d);
+      }
+      if (jet.y < 250) stampReflection(w < 4 ? '-o-' : '=-o-=', jet.x, jet.y, jet.z, time);
     },
   });
 }
 
 // Spawn schedule — each kind waits for its predecessor to leave
 const kinds = [
-  { kind: 'swifts', fn: spawnSwifts, first: [1.5, 4],  gap: [18, 40], on: true },
-  { kind: 'geese',  fn: spawnGeese,  first: [5, 10],   gap: [30, 60], on: true },
-  { kind: 'hawk',   fn: spawnHawk,   first: [0, 3],    gap: [15, 35], on: !NIGHT },
-  { kind: 'heron',  fn: spawnHeron,  first: [18, 35],  gap: [60, 110], on: !NIGHT },
-  { kind: 'drone',  fn: spawnDrone,  first: [7, 12],   gap: [12, 25], on: true },
-].filter(k => k.on);
+  { kind: 'swifts', fn: spawnSwifts, first: [1.5, 4],  gap: [18, 40] },
+  { kind: 'geese',  fn: spawnGeese,  first: [5, 10],   gap: [30, 60] },
+  { kind: 'hawk',   fn: spawnHawk,   first: [0, 3],    gap: [15, 35], dayOnly: true },
+  { kind: 'heron',  fn: spawnHeron,  first: [18, 35],  gap: [60, 110], dayOnly: true },
+  { kind: 'drone',  fn: spawnDrone,  first: [7, 12],   gap: [12, 25] },
+  { kind: 'jet',    fn: spawnJet,    first: [15, 30],  gap: [45, 100] },
+];
 kinds.forEach(k => { k.next = k.first[0] + rnd() * (k.first[1] - k.first[0]); });
 
 function stepFliers(dt, time) {
   for (const k of kinds) {
     if (fliers.some(f => f.kind === k.kind)) continue;
+    if (k.dayOnly && isNight()) continue;
     k.next -= dt;
     if (k.next <= 0) { k.fn(); k.next = k.gap[0] + rnd() * (k.gap[1] - k.gap[0]); }
   }
@@ -667,19 +932,93 @@ function render(now) {
 // ── Loop ─────────────────────────────────
 let visible = true, last = 0, lastW = 0, lastH = 0;
 
+// ── Sky mode: auto cycle, or pinned to day / night ──
+// Pinning fast-forwards the clock through dusk / dawn, then holds.
+const SKY_MODES = ['auto', 'day', 'night'];
+const SKY_PIN   = { day: 13, night: 23 };
+const SKY_FF    = 5;   // fast-forward speed, game hours per second
+let skyMode = 'auto', hourNow = HOUR0;
+try { const m = localStorage.getItem('heroSky'); if (SKY_MODES.includes(m)) skyMode = m; } catch (e) {}
+
+function advanceClock(dt) {
+  if (skyMode === 'auto') hourNow = (hourNow + dt * 24 / CYCLE) % 24;
+  else {
+    const gap = (SKY_PIN[skyMode] - hourNow + 24) % 24;
+    hourNow = (hourNow + Math.min(gap, dt * SKY_FF)) % 24;
+  }
+  setClock(hourNow);
+}
+
+// 9×9 pixel icons, one string per row
+const SKY_ICONS = {
+  auto:  ['...###...', '..#..##..', '.#...###.', '.#...###.', '.#...###.', '.#...###.', '.#...###.', '..#..##..', '...###...'],
+  day:   ['....#....', '.#.....#.', '...###...', '..#####..', '#.#####.#', '..#####..', '...###...', '.#.....#.', '....#....'],
+  night: ['..####...', '.###.....', '###......', '###......', '###......', '###......', '###......', '.###.....', '..####...'],
+};
+
+function initSkyToggle() {
+  const btn = hero.querySelector('.hero__sky');
+  if (!btn) return;
+  const paint = () => {
+    let rects = '';
+    SKY_ICONS[skyMode].forEach((row, y) => {
+      for (let x = 0; x < row.length; x++) if (row[x] === '#') rects += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
+    });
+    btn.innerHTML = `<svg viewBox="0 0 9 9" fill="currentColor" aria-hidden="true">${rects}</svg>`;
+    btn.dataset.label = skyMode;
+    btn.setAttribute('aria-label', `Sky: ${skyMode}`);
+    btn.title = `Sky: ${skyMode}`;
+  };
+  paint();
+  btn.addEventListener('click', () => {
+    skyMode = SKY_MODES[(SKY_MODES.indexOf(skyMode) + 1) % SKY_MODES.length];
+    try { localStorage.setItem('heroSky', skyMode); } catch (e) {}
+    paint();
+    if (STILL) {
+      // No animation: jump straight there and redraw once
+      if (skyMode !== 'auto') hourNow = SKY_PIN[skyMode];
+      setClock(hourNow);
+      relight(true);
+      syncTheme(performance.now());
+      render(performance.now());
+    }
+  });
+}
+let themeNight = null, shownOpacity = null;
+
+// Hero background / ink follow the cycle (CSS cross-fades them)
+function syncTheme(now) {
+  const night = isNight();
+  if (night !== themeNight) { hero.classList.toggle('hero--night', night); themeNight = night; }
+  const want = night ? 0.85 : 0.78;
+  if (now - startT > 2500 && want !== shownOpacity && window.gsap) {
+    gsap.to(el, { opacity: want, duration: 4, ease: 'sine.inOut' });
+    shownOpacity = want;
+  }
+}
+
 function loop(now) {
   requestAnimationFrame(loop);
   if (!visible || now - last < 1000 / FPS) return;
   const dt = Math.min(0.2, (now - (last || now)) / 1000);
   last = now;
+  advanceClock(dt);
+  relight(false);
+  syncTheme(now);
   stepFliers(dt, (now - startT) / 1000);
   render(now);
 }
 
 function start() {
   lastW = hero.clientWidth; lastH = hero.clientHeight;
+  // A pinned mode starts already there rather than fast-forwarding on load
+  if (skyMode !== 'auto') hourNow = SKY_PIN[skyMode];
+  setClock(hourNow);
   build();
   startT = performance.now();
+  syncTheme(startT);
+  initSkyToggle();
+  setTimeout(() => hero.classList.add('hero--cycle'), 100);
   if (STILL) {
     startT -= 5000;   // skip the intro, draw one settled frame
     render(performance.now());

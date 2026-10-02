@@ -318,6 +318,17 @@ code {
   background: linear-gradient(175deg, #1c222a 0%, #171b20 55%, #14171c 100%);
 }
 
+/* Night sky layer — cross-fades in as the hero's day/night cycle turns */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(175deg, #070b16 0%, #0d1020 55%, #131228 100%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .hero__headline {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(3.5rem, 10vw, 11rem);
@@ -381,9 +392,71 @@ code {
   50% { transform: translateX(-50%) translateY(8px); }
 }
 
+/* Sky toggle — tiny pixel icon tucked in the corner (auto → day → night) */
+.hero__sky {
+  position: absolute;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 6px;
+  background: none;
+  border: 0;
+  color: var(--text-muted);
+  opacity: 0.28;
+  cursor: pointer;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.hero__sky svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  shape-rendering: crispEdges;
+}
+
+.hero__sky::before {
+  content: attr(data-label);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  opacity: 0;
+  transform: translateX(4px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.hero__sky:hover,
+.hero__sky:focus-visible {
+  opacity: 0.9;
+  color: var(--text);
+  outline: none;
+}
+
+.hero__sky:hover::before,
+.hero__sky:focus-visible::before {
+  opacity: 1;
+  transform: none;
+}
+
 /* ── Night mode (hero only) ─────────────── */
-.hero--night {
-  background: linear-gradient(175deg, #070b16 0%, #0d1020 55%, #131228 100%);
+.hero--night::before {
+  opacity: 1;
+}
+
+/* Transitions switch on once the cycle is running, so a night-time
+   page load starts dark instead of fading in from day */
+.hero--cycle::before {
+  transition: opacity 6s ease-in-out;
+}
+
+.hero--cycle .hero__ascii,
+.hero--cycle .hero__headline,
+.hero--cycle .hero__role,
+.hero--cycle .hero__scroll-cue {
+  transition: color 6s ease-in-out;
 }
 
 .hero--night .hero__ascii {
@@ -400,6 +473,15 @@ code {
 
 .hero--night .hero__scroll-cue {
   color: #5c5480;
+}
+
+.hero--night .hero__sky {
+  color: #9088b0;
+}
+
+.hero--night .hero__sky:hover,
+.hero--night .hero__sky:focus-visible {
+  color: #f0ecf8;
 }
 
 
